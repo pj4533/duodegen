@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { SettingsProvider } from "@/hooks/useSettings";
+import GitHubCorner from "@/components/GitHubCorner";
 
 export const metadata: Metadata = {
   title: "Duodegen - Crimson Desert Card Game",
@@ -16,7 +17,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className="min-h-full flex flex-col antialiased">
-        <SettingsProvider>{children}</SettingsProvider>
+        <SettingsProvider>
+          <GitHubCorner />
+          {children}
+        </SettingsProvider>
       </body>
     </html>
   );

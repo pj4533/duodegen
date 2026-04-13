@@ -62,7 +62,9 @@ export default function RoundResult({
 
         {gameOver ? (
           <div className="space-y-2">
-            <p className="text-crimson-300 font-heading text-sm">Game Over</p>
+            <p className={`font-heading text-sm ${isWin ? "text-gold" : "text-crimson-300"}`}>
+              {isWin ? "Opponent is out of silver!" : "Game Over"}
+            </p>
             <Button onClick={onNewGame}>New Game</Button>
           </div>
         ) : (

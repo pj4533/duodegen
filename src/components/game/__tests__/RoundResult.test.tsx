@@ -88,7 +88,7 @@ describe("RoundResult", () => {
     expect(onContinue).toHaveBeenCalled();
   });
 
-  it("shows Game Over and New Game button when gameOver", async () => {
+  it("shows Game Over when player loses and game is over", async () => {
     const user = userEvent.setup();
     const onNewGame = vi.fn();
     render(
@@ -100,8 +100,24 @@ describe("RoundResult", () => {
       />
     );
     expect(screen.getByText("Game Over")).toBeInTheDocument();
+    expect(screen.queryByText("Opponent is out of silver!")).not.toBeInTheDocument();
     await user.click(screen.getByText("New Game"));
     expect(onNewGame).toHaveBeenCalled();
+  });
+
+  it("shows victory message when player wins and game is over", () => {
+    render(
+      <RoundResult
+        result={makeResult({ winner: "player", potWon: 30 })}
+        onContinue={vi.fn()}
+        gameOver={true}
+        onNewGame={vi.fn()}
+      />
+    );
+    expect(screen.getByText("Victory!")).toBeInTheDocument();
+    expect(screen.getByText("Opponent is out of silver!")).toBeInTheDocument();
+    expect(screen.getByText("New Game")).toBeInTheDocument();
+    expect(screen.queryByText("Game Over")).not.toBeInTheDocument();
   });
 
   it("shows hand names", () => {

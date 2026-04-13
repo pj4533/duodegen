@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useGameState } from "@/hooks/useGameState";
 import { useTimer } from "@/hooks/useTimer";
 import { evaluateHand } from "@/engine/hand-evaluator";
+import { GameState, BetAction } from "@/engine/types";
 import PlayerHand from "./PlayerHand";
 import OpponentHand from "./OpponentHand";
 import BettingControls from "./BettingControls";
@@ -12,10 +12,27 @@ import PotDisplay from "./PotDisplay";
 import RoundResult from "./RoundResult";
 import Button from "@/components/ui/Button";
 import HandGuide from "@/components/HandGuide";
+import LearningModeToggle from "./LearningModeToggle";
 
-export default function GameBoard() {
-  const { state, startRound, playerBet, handleTimerExpired, newGame } =
-    useGameState();
+interface GameBoardProps {
+  state: GameState;
+  startRound: () => void;
+  playerBet: (action: BetAction) => void;
+  handleTimerExpired: () => void;
+  newGame: () => void;
+  learningEnabled: boolean;
+  onToggleLearning: () => void;
+}
+
+export default function GameBoard({
+  state,
+  startRound,
+  playerBet,
+  handleTimerExpired,
+  newGame,
+  learningEnabled,
+  onToggleLearning,
+}: GameBoardProps) {
   const { secondsLeft } = useTimer(
     state.phase === "playerBet",
     handleTimerExpired
@@ -31,7 +48,7 @@ export default function GameBoard() {
   const isAiWinner = state.lastResult?.winner === "ai";
 
   return (
-    <div className="flex flex-col items-center gap-6 w-full max-w-lg mx-auto relative z-10">
+    <div className={`flex flex-col items-center gap-6 w-full max-w-lg mx-auto relative z-10 ${learningEnabled ? "pb-16 md:pb-0" : ""}`}>
       {/* Header */}
       <div className="flex items-center justify-between w-full">
         <div className="text-sm font-heading text-parchment-dark/60">
@@ -39,12 +56,18 @@ export default function GameBoard() {
             <span>Round {state.roundNumber}</span>
           )}
         </div>
-        <button
-          onClick={() => setShowGuide(true)}
-          className="text-xs font-heading text-gold-dark hover:text-gold-light transition-colors tracking-wider uppercase"
-        >
-          Hand Guide
-        </button>
+        <div className="flex items-center gap-3">
+          <LearningModeToggle
+            enabled={learningEnabled}
+            onToggle={onToggleLearning}
+          />
+          <button
+            onClick={() => setShowGuide(true)}
+            className="text-xs font-heading text-gold-dark hover:text-gold-light transition-colors tracking-wider uppercase"
+          >
+            Hand Guide
+          </button>
+        </div>
       </div>
 
       {/* Opponent */}

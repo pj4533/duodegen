@@ -135,3 +135,22 @@ export type GameAction =
     }
   | { type: "ROUND_COMPLETE"; result: RoundResult }
   | { type: "NEW_GAME" };
+
+// --- Learning Mode / Strategy Advisor Types ---
+
+export type HandStrengthTier = "premium" | "strong" | "medium" | "weak" | "trash";
+export type ActionAdvice = "raise" | "call" | "check" | "fold" | "allIn";
+
+export interface StrategyAdvice {
+  recommendedAction: ActionAdvice;
+  confidence: "high" | "moderate" | "low";
+  headline: string;
+  reasons: string[];
+  handStrength: HandStrengthTier;
+  handPercentile: number;
+  opponentThreat: string;
+  blockerNote: string | null;
+  potOdds: { needed: number; favorable: boolean } | null;
+  bluffViable: boolean;
+  bluffReason: string | null;
+}

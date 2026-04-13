@@ -23,7 +23,9 @@ All game logic lives in `src/engine/` with zero UI dependencies. Every engine fu
 - **`src/engine/betting.ts`** - 6 actions: Check, Call, Half Raise (50% pot), Double Raise (2x last raise), All In, Fold. `BetState` tracks `playerActed`/`aiActed` flags for determining when betting is complete.
 - **`src/engine/ai.ts`** - Weighted random strategy. Categorizes hands into strong/medium/weak and adjusts action weights. Considers visible player card.
 
-UI state is managed via `useReducer` in `src/hooks/useGameState.ts`. No external state libraries.
+- **`src/engine/strategy.ts`** - Strategy advisor engine for Learning Mode. Pure functions: `generateAdvice()`, `classifyHandStrength()`, `analyzeOpponentVisible()`, `calculateWinProbability()`, `assessBluffViability()`. Based on researched Seotda strategy.
+
+UI state is managed via `useReducer` in `src/hooks/useGameState.ts`. No external state libraries. The `useLearningMode` hook manages the optional strategy advisor panel.
 
 ## Key Rules to Preserve
 
@@ -32,6 +34,15 @@ UI state is managed via `useReducer` in `src/hooks/useGameState.ts`. No external
 - Warden evaluates to **3 Points** as fallback. Judge evaluates to **Zero** as fallback. Executor evaluates to **1 Point** as fallback.
 - Rematches carry the pot over, cap at 3.
 - Winner gets the First Turn marker for the next round.
+
+## Debug / No-Timer Mode
+
+Add `?debug` to the play URL (e.g. `http://localhost:3000/play?debug`) to disable the 10-second betting timer. This is useful for:
+- Playwright/automated testing (no timer pressure)
+- Manual debugging of game flow
+- Taking time to study the strategy advisor
+
+The timer UI is hidden and auto-call on expiry is suppressed. Requires `<Suspense>` wrapping in PlayPage because `useSearchParams` is used.
 
 ## Testing
 

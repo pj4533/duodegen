@@ -8,7 +8,7 @@ import {
   HandStrengthTier,
   ActionAdvice,
 } from "./types";
-import { evaluateHand } from "./hand-evaluator";
+import { evaluateHand, getHandDisplayName } from "./hand-evaluator";
 
 // --- Hand Strength Classification ---
 
@@ -383,9 +383,10 @@ export function recommendAction(
 
 function buildHeadline(
   action: ActionAdvice,
-  handName: string,
+  result: HandResult,
   tier: HandStrengthTier
 ): string {
+  const handName = getHandDisplayName(result);
   const tierLabels: Record<HandStrengthTier, string> = {
     premium: "elite",
     strong: "strong",
@@ -464,7 +465,7 @@ export function generateAdvice(
   return {
     recommendedAction: finalAction,
     confidence,
-    headline: buildHeadline(finalAction, playerResult.name, tier),
+    headline: buildHeadline(finalAction, playerResult, tier),
     reasons: fullReasons.slice(0, 3),
     handStrength: tier,
     handPercentile: percentile,

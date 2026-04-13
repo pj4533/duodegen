@@ -18,13 +18,13 @@ describe("PlayerHand", () => {
         ]}
       />
     );
-    expect(screen.getByText("5")).toBeInTheDocument();
-    expect(screen.getByText("7")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /red 5/i })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /yellow 7/i })).toBeInTheDocument();
   });
 
   it("renders empty placeholders when no hand", () => {
     renderWithSettings(<PlayerHand hand={null} />);
-    expect(screen.queryByText(/\d/)).not.toBeInTheDocument();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 
   it("shows hand result when showResult is true", () => {

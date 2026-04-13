@@ -44,7 +44,7 @@ export default function GameBoard({
 
   const isShowdown = state.phase === "showdown" || state.phase === "roundEnd";
   const playerResult =
-    state.playerHand && isShowdown ? evaluateHand(state.playerHand) : null;
+    state.playerHand ? evaluateHand(state.playerHand) : null;
   const aiResult =
     state.aiHand && isShowdown ? evaluateHand(state.aiHand) : null;
   const isPlayerWinner = state.lastResult?.winner === "player";
@@ -122,7 +122,7 @@ export default function GameBoard({
       <PlayerHand
         hand={state.playerHand}
         handResult={playerResult}
-        showResult={isShowdown && !!state.lastResult}
+        showResult={!!playerResult}
         isWinner={isPlayerWinner}
       />
 

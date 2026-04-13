@@ -21,12 +21,19 @@ export default function OpponentHand({
   showResult = false,
   isWinner = false,
 }: OpponentHandProps) {
+  const revealedStick = hand && !showAll ? hand[revealedIndex] : null;
+
   return (
     <div className="flex flex-col items-center gap-2">
       <span className="text-xs text-parchment-dark/60 font-heading tracking-wider uppercase">
         Opponent
       </span>
       {showResult && handResult && <HandLabel result={handResult} isWinner={isWinner} />}
+      {!showResult && revealedStick && (
+        <span className="text-xs text-parchment-dark/50 font-heading tracking-wide">
+          Showing {revealedStick.number}
+        </span>
+      )}
       <div className="flex gap-3">
         {hand ? (
           <>

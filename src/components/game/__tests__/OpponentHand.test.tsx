@@ -19,8 +19,8 @@ describe("OpponentHand", () => {
         revealedIndex={0}
       />
     );
-    expect(screen.getByText("3")).toBeInTheDocument();
-    expect(screen.queryByText("9")).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /red 3/i })).toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: /yellow 9/i })).not.toBeInTheDocument();
   });
 
   it("reveals second card when revealedIndex is 1", () => {
@@ -33,8 +33,8 @@ describe("OpponentHand", () => {
         revealedIndex={1}
       />
     );
-    expect(screen.queryByText("3")).not.toBeInTheDocument();
-    expect(screen.getByText("9")).toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: /red 3/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /yellow 9/i })).toBeInTheDocument();
   });
 
   it("shows all cards when showAll is true", () => {
@@ -48,8 +48,8 @@ describe("OpponentHand", () => {
         showAll={true}
       />
     );
-    expect(screen.getByText("3")).toBeInTheDocument();
-    expect(screen.getByText("9")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /red 3/i })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /yellow 9/i })).toBeInTheDocument();
   });
 
   it("shows face-down sticks when no hand", () => {
@@ -57,7 +57,7 @@ describe("OpponentHand", () => {
       <OpponentHand hand={null} revealedIndex={0} />
     );
     expect(container.querySelectorAll("div")).toBeTruthy();
-    expect(screen.queryByText(/\d/)).not.toBeInTheDocument();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 
   it("shows hand result when showResult is true", () => {

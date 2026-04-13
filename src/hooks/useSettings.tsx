@@ -3,6 +3,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
 } from "react";
@@ -43,7 +44,12 @@ const SettingsContext = createContext<SettingsContextValue>({
 });
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettings] = useState<Settings>(loadSettings);
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+
+  // Load from localStorage after hydration to avoid SSR mismatch
+  useEffect(() => {
+    setSettings(loadSettings());
+  }, []);
 
   const updateSettings = (patch: Partial<Settings>) => {
     setSettings((prev) => {

@@ -48,40 +48,40 @@ const CRIMSON_DESERT_NAMES: HandNameSet = {
 
 const TRADITIONAL_NAMES: HandNameSet = {
   ranks: {
-    [HandRank.PrimePair]: "삼팔광땡 (38 Gwang-ttaeng)",
-    [HandRank.SuperiorPair]: "광땡 (Gwang-ttaeng)",
-    [HandRank.TenPair]: "장땡 (Jang-ttaeng)",
-    [HandRank.Pair9]: "9땡 (Gu-ttaeng)",
-    [HandRank.Pair8]: "8땡 (Pal-ttaeng)",
-    [HandRank.Pair7]: "7땡 (Chil-ttaeng)",
-    [HandRank.Pair6]: "6땡 (Yuk-ttaeng)",
-    [HandRank.Pair5]: "5땡 (O-ttaeng)",
-    [HandRank.Pair4]: "4땡 (Sa-ttaeng)",
-    [HandRank.Pair3]: "3땡 (Sam-ttaeng)",
-    [HandRank.Pair2]: "2땡 (I-ttaeng)",
-    [HandRank.Pair1]: "삥땡 (Bing-ttaeng)",
-    [HandRank.Ali]: "알리 (Ali)",
-    [HandRank.DokSa]: "독사 (Dok-sa)",
-    [HandRank.GuBing]: "구삥 (Gu-bing)",
-    [HandRank.JangBing]: "장삥 (Jang-bing)",
-    [HandRank.JangSa]: "장사 (Jang-sa)",
-    [HandRank.SelRyuk]: "세륙 (Se-ryuk)",
-    [HandRank.PerfectNine]: "갑오 (Gap-o)",
-    [HandRank.Points8]: "8끗 (Pal-kkeut)",
-    [HandRank.Points7]: "7끗 (Chil-kkeut)",
-    [HandRank.Points6]: "6끗 (Yuk-kkeut)",
-    [HandRank.Points5]: "5끗 (O-kkeut)",
-    [HandRank.Points4]: "4끗 (Sa-kkeut)",
-    [HandRank.Points3]: "3끗 (Sam-kkeut)",
-    [HandRank.Points2]: "2끗 (I-kkeut)",
-    [HandRank.Points1]: "한끗 (Han-kkeut)",
-    [HandRank.MangTong]: "망통 (Mang-tong)",
+    [HandRank.PrimePair]: "38 Bright Pair",
+    [HandRank.SuperiorPair]: "Bright Pair",
+    [HandRank.TenPair]: "10 Ttaeng",
+    [HandRank.Pair9]: "9 Ttaeng",
+    [HandRank.Pair8]: "8 Ttaeng",
+    [HandRank.Pair7]: "7 Ttaeng",
+    [HandRank.Pair6]: "6 Ttaeng",
+    [HandRank.Pair5]: "5 Ttaeng",
+    [HandRank.Pair4]: "4 Ttaeng",
+    [HandRank.Pair3]: "3 Ttaeng",
+    [HandRank.Pair2]: "2 Ttaeng",
+    [HandRank.Pair1]: "1 Ttaeng",
+    [HandRank.Ali]: "Ali",
+    [HandRank.DokSa]: "Dok-sa",
+    [HandRank.GuBing]: "Gu-bing",
+    [HandRank.JangBing]: "Jang-bing",
+    [HandRank.JangSa]: "Jang-sa",
+    [HandRank.SelRyuk]: "Se-ryuk",
+    [HandRank.PerfectNine]: "Gap-o",
+    [HandRank.Points8]: "8 Kkeut",
+    [HandRank.Points7]: "7 Kkeut",
+    [HandRank.Points6]: "6 Kkeut",
+    [HandRank.Points5]: "5 Kkeut",
+    [HandRank.Points4]: "4 Kkeut",
+    [HandRank.Points3]: "3 Kkeut",
+    [HandRank.Points2]: "2 Kkeut",
+    [HandRank.Points1]: "1 Kkeut",
+    [HandRank.MangTong]: "Mang-tong",
   },
   specials: {
-    judge: "땡잡이 (Ttaeng-jab-i)",
-    executor: "암행어사 (Am-haeng-eo-sa)",
-    warden: "구사 (Gu-sa)",
-    highWarden: "멍텅구리 구사 (Meong-gu-sa)",
+    judge: "Pair Catcher",
+    executor: "Secret Inspector",
+    warden: "Gu-sa",
+    highWarden: "Animal Gu-sa",
   },
 };
 
@@ -137,7 +137,7 @@ export function getRankingsGuide(style: HandNameStyle) {
     { name: names.ranks[HandRank.JangSa], cards: "4 + 10", tier: "named" as const },
     { name: names.ranks[HandRank.SelRyuk], cards: "4 + 6", tier: "named" as const },
     { name: names.ranks[HandRank.PerfectNine], cards: "Sum ends in 9", tier: "points" as const },
-    { name: "8-1 " + (style === "crimsonDesert" ? "Points" : "끗"), cards: "Sum ends in 8-1", tier: "points" as const },
+    { name: "8-1 " + (style === "crimsonDesert" ? "Points" : "Kkeut"), cards: "Sum ends in 8-1", tier: "points" as const },
     { name: names.ranks[HandRank.MangTong], cards: "Sum ends in 0", tier: "points" as const },
   ];
 }
@@ -150,28 +150,28 @@ export function getSpecialsGuide(style: HandNameStyle) {
       cards: "3 + 7",
       effect: style === "crimsonDesert"
         ? "Beats 9-Pair or lower. Becomes Zero vs Ten Pair+."
-        : "Beats 9땡 or lower. Becomes 망통 vs 장땡+.",
+        : "Beats 9 Ttaeng or lower. Becomes Mang-tong vs 10 Ttaeng+.",
     },
     {
       name: names.specials.executor,
       cards: "Red 4 + Red 7",
       effect: style === "crimsonDesert"
         ? "Beats Superior Pair only. Becomes 1 Point otherwise."
-        : "Beats 광땡 only. Becomes 한끗 otherwise.",
+        : "Beats Bright Pair only. Becomes 1 Kkeut otherwise.",
     },
     {
       name: names.specials.warden,
       cards: "4 + 9",
       effect: style === "crimsonDesert"
         ? "Rematch if opponent has Ali or lower."
-        : "Rematch if opponent has 알리 or lower.",
+        : "Rematch if opponent has Ali or lower.",
     },
     {
       name: names.specials.highWarden,
       cards: "Red 4 + Red 9",
       effect: style === "crimsonDesert"
         ? "Rematch if opponent has 9-Pair or lower."
-        : "Rematch if opponent has 9땡 or lower.",
+        : "Rematch if opponent has 9 Ttaeng or lower.",
     },
   ];
 }

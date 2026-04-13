@@ -118,6 +118,6 @@ describe("useLearningMode", () => {
     });
     const { result } = renderHook(() => useLearningMode(state, true, "traditional"));
     expect(result.current.advice).not.toBeNull();
-    expect(result.current.advice!.headline).toContain("알리");
+    expect(result.current.advice!.headline).toContain("Ali");
   });
 });

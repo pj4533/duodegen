@@ -31,7 +31,7 @@ describe("SettingsModal", () => {
   it("shows both name style options", () => {
     renderWithSettings(<SettingsModal open={true} onClose={vi.fn()} />);
     expect(screen.getByText("Crimson Desert")).toBeInTheDocument();
-    expect(screen.getByText("Traditional Korean")).toBeInTheDocument();
+    expect(screen.getByText("Traditional Seotda")).toBeInTheDocument();
   });
 
   it("toggles learning mode", async () => {

@@ -71,7 +71,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                   Crimson Desert
                 </span>
                 <p className="text-xs text-parchment-dark/60">
-                  Prime Pair, Ali, Judge, Mang Tong...
+                  Prime Pair, Judge, Executor, Mang Tong...
                 </p>
               </div>
             </label>
@@ -86,10 +86,10 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
               />
               <div>
                 <span className="text-sm text-parchment-light font-heading group-hover:text-gold-light transition-colors">
-                  Traditional Korean
+                  Traditional Seotda
                 </span>
                 <p className="text-xs text-parchment-dark/60">
-                  삼팔광땡, 알리, 땡잡이, 망통...
+                  38 Bright Pair, Pair Catcher, Secret Inspector, Mang-tong...
                 </p>
               </div>
             </label>

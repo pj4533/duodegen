@@ -62,9 +62,9 @@ export default function RulesPage() {
             {[
               { action: "Check", desc: "Pass without betting. Only if no one has raised." },
               { action: "Call", desc: "Match the current bet." },
-              { action: "Half Raise", desc: "Raise by half the current pot." },
-              { action: "Double Raise", desc: "Raise by double the previous raise." },
-              { action: "All In", desc: "Bet all your remaining silver." },
+              { action: "Half-Pot", desc: "Raise by half the current pot." },
+              { action: "Raise", desc: "Raise by double the previous raise." },
+              { action: "All-in", desc: "Bet all your remaining silver." },
               { action: "Fold", desc: "Forfeit the round." },
             ].map((b) => (
               <div

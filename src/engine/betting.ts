@@ -195,3 +195,25 @@ export function isBettingComplete(
 
   return false;
 }
+
+export function getBetAmounts(
+  betState: BetState,
+  actor: "player" | "ai"
+): Record<BetAction, number> {
+  const silver =
+    actor === "player" ? betState.playerSilver : betState.aiSilver;
+  const myBet =
+    actor === "player"
+      ? betState.playerBetThisRound
+      : betState.aiBetThisRound;
+  const toCall = betState.currentBet - myBet;
+
+  return {
+    check: 0,
+    call: Math.min(toCall, silver),
+    halfRaise: Math.min(toCall + Math.floor(betState.pot / 2), silver),
+    doubleRaise: Math.min(toCall + betState.lastRaise * 2, silver),
+    allIn: silver,
+    fold: 0,
+  };
+}

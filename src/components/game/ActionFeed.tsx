@@ -7,9 +7,9 @@ interface ActionFeedProps {
 const ACTION_LABELS: Record<BetAction, string> = {
   check: "Checked",
   call: "Called",
-  halfRaise: "Half Raised",
-  doubleRaise: "Double Raised",
-  allIn: "All In!",
+  halfRaise: "Raised Half-Pot",
+  doubleRaise: "Raised",
+  allIn: "All-in!",
   fold: "Folded",
 };
 

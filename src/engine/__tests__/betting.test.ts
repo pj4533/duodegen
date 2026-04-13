@@ -4,6 +4,7 @@ import {
   getAvailableActions,
   applyBet,
   isBettingComplete,
+  getBetAmounts,
 } from "../betting";
 
 describe("createInitialBetState", () => {
@@ -272,5 +273,60 @@ describe("isBettingComplete", () => {
     state.aiBetThisRound = 0;
     // bothActed = false, AI hasn't responded yet
     expect(isBettingComplete(state, "allIn", false)).toBe(false);
+  });
+});
+
+describe("getBetAmounts", () => {
+  it("returns zeros for check and fold, full silver for allIn in initial state", () => {
+    const state = createInitialBetState(15, 15);
+    const amounts = getBetAmounts(state, "player");
+    expect(amounts.check).toBe(0);
+    expect(amounts.fold).toBe(0);
+    expect(amounts.allIn).toBe(15);
+    expect(amounts.call).toBe(0);
+    expect(amounts.halfRaise).toBe(0);
+    expect(amounts.doubleRaise).toBe(0);
+  });
+
+  it("calculates correct amounts after opponent raises", () => {
+    const state = createInitialBetState(15, 15);
+    state.pot = 6;
+    state.currentBet = 3;
+    state.aiBetThisRound = 3;
+    state.lastRaise = 3;
+    const amounts = getBetAmounts(state, "player");
+    expect(amounts.call).toBe(3); // toCall = 3
+    expect(amounts.halfRaise).toBe(6); // toCall(3) + floor(6/2)=3
+    expect(amounts.doubleRaise).toBe(9); // toCall(3) + 3*2=6
+    expect(amounts.allIn).toBe(15);
+  });
+
+  it("caps amounts at available silver", () => {
+    const state = createInitialBetState(4, 15);
+    state.pot = 10;
+    state.currentBet = 5;
+    state.aiBetThisRound = 5;
+    state.lastRaise = 5;
+    const amounts = getBetAmounts(state, "player");
+    // toCall=5 but silver=4, so call is capped
+    expect(amounts.call).toBe(4);
+    // halfRaise: toCall(5) + floor(10/2)=5 = 10, capped to 4
+    expect(amounts.halfRaise).toBe(4);
+    // doubleRaise: toCall(5) + 5*2=10 = 15, capped to 4
+    expect(amounts.doubleRaise).toBe(4);
+    expect(amounts.allIn).toBe(4);
+  });
+
+  it("works for AI actor", () => {
+    const state = createInitialBetState(15, 10);
+    state.pot = 4;
+    state.currentBet = 2;
+    state.playerBetThisRound = 2;
+    state.lastRaise = 2;
+    const amounts = getBetAmounts(state, "ai");
+    expect(amounts.call).toBe(2);
+    expect(amounts.halfRaise).toBe(4); // toCall(2) + floor(4/2)=2
+    expect(amounts.doubleRaise).toBe(6); // toCall(2) + 2*2=4
+    expect(amounts.allIn).toBe(10);
   });
 });

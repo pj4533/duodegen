@@ -13,12 +13,12 @@ describe("BettingControls", () => {
         onAction={onAction}
       />
     );
-    expect(screen.getByText("Check")).toBeInTheDocument();
-    expect(screen.getByText("Call")).toBeInTheDocument();
-    expect(screen.getByText("Half Raise")).toBeInTheDocument();
-    expect(screen.getByText("Double Raise")).toBeInTheDocument();
-    expect(screen.getByText("All In")).toBeInTheDocument();
-    expect(screen.getByText("Fold")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Check/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Call/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Half-Pot/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Raise/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /All-in/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Fold/i })).toBeInTheDocument();
   });
 
   it("disables unavailable actions", () => {
@@ -27,11 +27,11 @@ describe("BettingControls", () => {
     render(<BettingControls betState={betState} onAction={onAction} />);
 
     // Call should be disabled (no bet to call)
-    expect(screen.getByText("Call")).toBeDisabled();
+    expect(screen.getByRole("button", { name: /Call/i })).toBeDisabled();
     // Fold should be disabled (no bet to fold against)
-    expect(screen.getByText("Fold")).toBeDisabled();
+    expect(screen.getByRole("button", { name: /Fold/i })).toBeDisabled();
     // Check should be enabled
-    expect(screen.getByText("Check")).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /Check/i })).not.toBeDisabled();
   });
 
   it("calls onAction when a button is clicked", async () => {
@@ -44,7 +44,7 @@ describe("BettingControls", () => {
       />
     );
 
-    await user.click(screen.getByText("Check"));
+    await user.click(screen.getByRole("button", { name: /Check/i }));
     expect(onAction).toHaveBeenCalledWith("check");
   });
 
@@ -59,5 +59,24 @@ describe("BettingControls", () => {
     );
     const buttons = screen.getAllByRole("button");
     buttons.forEach((btn) => expect(btn).toBeDisabled());
+  });
+
+  it("shows silver amounts on buttons when non-zero", () => {
+    const onAction = vi.fn();
+    const betState = createInitialBetState(15, 15);
+    betState.pot = 6;
+    betState.currentBet = 3;
+    betState.aiBetThisRound = 3;
+    betState.lastRaise = 3;
+    render(<BettingControls betState={betState} onAction={onAction} />);
+
+    // All-in shows full silver
+    expect(screen.getByRole("button", { name: /All-in for 15 silver/i })).toHaveTextContent("15 All-in");
+    // Half-Pot: toCall(3) + floor(6/2)=3 = 6
+    expect(screen.getByRole("button", { name: /Half-Pot for 6 silver/i })).toHaveTextContent("6 Half-Pot");
+    // Raise: toCall(3) + 3*2=6 = 9
+    expect(screen.getByRole("button", { name: /Raise for 9 silver/i })).toHaveTextContent("9 Raise");
+    // Call: toCall = 3
+    expect(screen.getByRole("button", { name: /Call for 3 silver/i })).toHaveTextContent("3 Call");
   });
 });

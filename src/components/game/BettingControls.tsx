@@ -1,7 +1,7 @@
 "use client";
 
 import type { BetAction, BetState } from "@/engine/types";
-import { getAvailableActions } from "@/engine/betting";
+import { getAvailableActions, getBetAmounts } from "@/engine/betting";
 import Button from "@/components/ui/Button";
 
 interface BettingControlsProps {
@@ -13,9 +13,9 @@ interface BettingControlsProps {
 const ACTION_LABELS: Record<BetAction, string> = {
   check: "Check",
   call: "Call",
-  halfRaise: "Half Raise",
-  doubleRaise: "Double Raise",
-  allIn: "All In",
+  halfRaise: "Half-Pot",
+  doubleRaise: "Raise",
+  allIn: "All-in",
   fold: "Fold",
 };
 
@@ -25,12 +25,17 @@ export default function BettingControls({
   disabled = false,
 }: BettingControlsProps) {
   const available = getAvailableActions(betState, "player");
+  const amounts = getBetAmounts(betState, "player");
 
   return (
     <div className="flex flex-wrap gap-2 justify-center" role="group" aria-label="Betting actions">
-      {(["check", "call", "halfRaise", "doubleRaise", "allIn", "fold"] as BetAction[]).map(
+      {(["allIn", "halfRaise", "doubleRaise", "call", "fold", "check"] as BetAction[]).map(
         (action) => {
           const isAvailable = available.includes(action);
+          const amount = amounts[action];
+          const label = amount > 0
+            ? `${amount} ${ACTION_LABELS[action]}`
+            : ACTION_LABELS[action];
           return (
             <Button
               key={action}
@@ -38,9 +43,11 @@ export default function BettingControls({
               size="sm"
               disabled={disabled || !isAvailable}
               onClick={() => onAction(action)}
-              aria-label={ACTION_LABELS[action]}
+              aria-label={amount > 0
+                ? `${ACTION_LABELS[action]} for ${amount} silver`
+                : ACTION_LABELS[action]}
             >
-              {ACTION_LABELS[action]}
+              {label}
             </Button>
           );
         }

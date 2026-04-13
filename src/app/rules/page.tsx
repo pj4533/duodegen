@@ -1,54 +1,14 @@
+"use client";
+
 import Link from "next/link";
-
-const RANKINGS = [
-  { rank: 1, name: "Prime Pair", cards: "Red 3 + Red 8", desc: "Unbeatable. Both sticks must be Red." },
-  { rank: 2, name: "Superior Pair", cards: "Red 1 + Red 8 or Red 1 + Red 3", desc: "Both sticks must be Red." },
-  { rank: 3, name: "Ten Pair", cards: "10 + 10 (any color)", desc: "Highest regular pair." },
-  { rank: "4-12", name: "Pairs", cards: "Same number (9-9 down to 1-1)", desc: "Higher number wins." },
-  { rank: 13, name: "Ali", cards: "1 + 2", desc: "Best named hand." },
-  { rank: 14, name: "Dok Sa", cards: "1 + 4", desc: "" },
-  { rank: 15, name: "Gu Bing", cards: "1 + 9", desc: "" },
-  { rank: 16, name: "Jang Bing", cards: "1 + 10", desc: "" },
-  { rank: 17, name: "Jang Sa", cards: "4 + 10", desc: "" },
-  { rank: 18, name: "Sel Ryuk", cards: "4 + 6", desc: "Lowest named hand." },
-  { rank: 19, name: "9 Points", cards: "Sum ends in 9", desc: "Best point hand." },
-  { rank: "20-26", name: "8-2 Points", cards: "Sum ends in 8 down to 2", desc: "" },
-  { rank: 27, name: "1 Point", cards: "Sum ends in 1", desc: "" },
-  { rank: 28, name: "Mang Tong", cards: "Sum ends in 0", desc: "Worst possible hand." },
-];
-
-const SPECIALS = [
-  {
-    name: "Judge",
-    cards: "3 + 7 (any color)",
-    ability: "Beats any hand that is 9-Pair or lower.",
-    fallback: "Becomes Zero (Mang Tong) if opponent has Ten Pair or higher.",
-    korean: "땡잡이",
-  },
-  {
-    name: "Executor",
-    cards: "Red 4 + Red 7",
-    ability: "Beats Superior Pair only.",
-    fallback: "Becomes 1 Point if opponent doesn't have Superior Pair.",
-    korean: "암행어사",
-  },
-  {
-    name: "Warden",
-    cards: "4 + 9 (any color)",
-    ability: "Triggers a rematch if opponent has Ali or lower.",
-    fallback: "Evaluates as 3 Points if no rematch triggers.",
-    korean: "구사",
-  },
-  {
-    name: "High Warden",
-    cards: "Red 4 + Red 9",
-    ability: "Triggers a rematch if opponent has 9-Pair or lower.",
-    fallback: "Evaluates as 3 Points if no rematch triggers.",
-    korean: "멍텅구리 구사",
-  },
-];
+import { getRankingsGuide, getSpecialsGuide } from "@/engine/hand-names";
+import { useSettings } from "@/hooks/useSettings";
 
 export default function RulesPage() {
+  const { handNameStyle } = useSettings();
+  const RANKINGS = getRankingsGuide(handNameStyle);
+  const SPECIALS = getSpecialsGuide(handNameStyle);
+
   return (
     <div className="flex flex-1 flex-col relative z-10">
       <header className="flex items-center justify-between px-4 py-3 border-b border-gold-dark/10">
@@ -125,23 +85,18 @@ export default function RulesPage() {
           </h2>
           <p className="text-xs text-parchment-dark/60">Best to worst, top to bottom.</p>
           <div className="space-y-1">
-            {RANKINGS.map((r) => (
+            {RANKINGS.map((r, i) => (
               <div
                 key={r.name}
                 className="flex items-baseline gap-3 py-1 text-sm border-b border-crimson-900/20 last:border-0"
               >
                 <span className="text-gold-dark/60 text-xs font-heading w-8 text-right shrink-0">
-                  {r.rank}
+                  {i + 1}
                 </span>
                 <span className="font-heading text-parchment-light min-w-[100px]">
                   {r.name}
                 </span>
                 <span className="text-parchment-dark/70 text-xs">{r.cards}</span>
-                {r.desc && (
-                  <span className="text-parchment-dark/50 text-xs ml-auto hidden sm:inline">
-                    {r.desc}
-                  </span>
-                )}
               </div>
             ))}
           </div>
@@ -161,15 +116,9 @@ export default function RulesPage() {
                 key={s.name}
                 className="bg-crimson-900/30 rounded-lg p-3 border border-gold-dark/15 space-y-1"
               >
-                <div className="flex items-baseline justify-between">
-                  <span className="font-heading text-gold-light">{s.name}</span>
-                  <span className="text-xs text-parchment-dark/50 font-heading">
-                    {s.korean}
-                  </span>
-                </div>
+                <span className="font-heading text-gold-light">{s.name}</span>
                 <p className="text-xs text-parchment-dark/70">Cards: {s.cards}</p>
-                <p className="text-sm text-parchment-light">{s.ability}</p>
-                <p className="text-xs text-crimson-300/70">{s.fallback}</p>
+                <p className="text-sm text-parchment-light">{s.effect}</p>
               </div>
             ))}
           </div>

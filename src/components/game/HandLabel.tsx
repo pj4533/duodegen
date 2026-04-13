@@ -1,7 +1,8 @@
 "use client";
 
 import type { HandResult } from "@/engine/types";
-import { getHandDisplayName } from "@/engine/hand-evaluator";
+import { getDisplayName } from "@/engine/hand-names";
+import { useSettings } from "@/hooks/useSettings";
 
 interface HandLabelProps {
   result: HandResult;
@@ -9,6 +10,8 @@ interface HandLabelProps {
 }
 
 export default function HandLabel({ result, isWinner = false }: HandLabelProps) {
+  const { handNameStyle } = useSettings();
+
   return (
     <div
       className={`
@@ -19,7 +22,7 @@ export default function HandLabel({ result, isWinner = false }: HandLabelProps) 
         }
       `}
     >
-      {getHandDisplayName(result)}
+      {getDisplayName(result.rank, result.special, handNameStyle)}
     </div>
   );
 }

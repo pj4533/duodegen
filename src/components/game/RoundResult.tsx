@@ -1,6 +1,8 @@
 "use client";
 
 import type { RoundResult as RoundResultType } from "@/engine/types";
+import { getDisplayName } from "@/engine/hand-names";
+import { useSettings } from "@/hooks/useSettings";
 import Button from "@/components/ui/Button";
 
 interface RoundResultProps {
@@ -16,8 +18,11 @@ export default function RoundResult({
   gameOver,
   onNewGame,
 }: RoundResultProps) {
+  const { handNameStyle } = useSettings();
   const isWin = result.winner === "player";
   const isDraw = result.winner === "draw";
+  const playerName = getDisplayName(result.playerHandResult.rank, result.playerHandResult.special, handNameStyle);
+  const aiName = getDisplayName(result.aiHandResult.rank, result.aiHandResult.special, handNameStyle);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
@@ -44,13 +49,13 @@ export default function RoundResult({
           <p>
             Your hand:{" "}
             <span className="text-parchment-light font-heading">
-              {result.playerHandResult.name}
+              {playerName}
             </span>
           </p>
           <p>
             Opponent:{" "}
             <span className="text-parchment-light font-heading">
-              {result.aiHandResult.name}
+              {aiName}
             </span>
           </p>
           {!isDraw && (

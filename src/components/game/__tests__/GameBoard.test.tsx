@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import GameBoard from "../GameBoard";
 import { createInitialGameState } from "@/engine/game-state";
 import { GameState, BetAction } from "@/engine/types";
+import { SettingsProvider } from "@/hooks/useSettings";
 
 function defaultProps(overrides?: Partial<GameState>) {
   const state = { ...createInitialGameState(), ...overrides };
@@ -14,8 +15,12 @@ function defaultProps(overrides?: Partial<GameState>) {
     handleTimerExpired: vi.fn(),
     newGame: vi.fn(),
     learningEnabled: false,
-    onToggleLearning: vi.fn(),
+    onOpenSettings: vi.fn(),
   };
+}
+
+function renderWithSettings(ui: React.ReactElement) {
+  return render(<SettingsProvider>{ui}</SettingsProvider>);
 }
 
 describe("GameBoard", () => {
@@ -28,36 +33,35 @@ describe("GameBoard", () => {
   });
 
   it("renders Start Game button initially", () => {
-    render(<GameBoard {...defaultProps()} />);
+    renderWithSettings(<GameBoard {...defaultProps()} />);
     expect(screen.getByText("Start Game")).toBeInTheDocument();
   });
 
   it("renders Hand Guide button", () => {
-    render(<GameBoard {...defaultProps()} />);
+    renderWithSettings(<GameBoard {...defaultProps()} />);
     expect(screen.getByText("Hand Guide")).toBeInTheDocument();
   });
 
-  it("renders Learn toggle", () => {
-    render(<GameBoard {...defaultProps()} />);
-    expect(screen.getByLabelText("Learning mode off")).toBeInTheDocument();
+  it("renders Settings button", () => {
+    renderWithSettings(<GameBoard {...defaultProps()} />);
+    expect(screen.getByLabelText("Settings")).toBeInTheDocument();
   });
 
   it("shows dealing state when phase is dealing", () => {
-    render(<GameBoard {...defaultProps({ phase: "dealing" })} />);
+    renderWithSettings(<GameBoard {...defaultProps({ phase: "dealing" })} />);
     expect(screen.getByText("Dealing sticks...")).toBeInTheDocument();
   });
 
   it("opens hand guide modal", async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    render(<GameBoard {...defaultProps()} />);
+    renderWithSettings(<GameBoard {...defaultProps()} />);
 
     await user.click(screen.getByText("Hand Guide"));
     expect(screen.getByText("Hand Rankings")).toBeInTheDocument();
   });
 
   it("shows silver amounts", () => {
-    render(<GameBoard {...defaultProps()} />);
-    // Both players start with 15 silver
+    renderWithSettings(<GameBoard {...defaultProps()} />);
     const fifteens = screen.getAllByText("15");
     expect(fifteens.length).toBeGreaterThanOrEqual(2);
   });
@@ -65,24 +69,32 @@ describe("GameBoard", () => {
   it("calls startRound when Start Game is clicked", async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const props = defaultProps();
-    render(<GameBoard {...props} />);
+    renderWithSettings(<GameBoard {...props} />);
 
     await user.click(screen.getByText("Start Game"));
     expect(props.startRound).toHaveBeenCalled();
   });
 
-  it("calls onToggleLearning when Learn is clicked", async () => {
+  it("calls onOpenSettings when Settings is clicked", async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const props = defaultProps();
-    render(<GameBoard {...props} />);
+    renderWithSettings(<GameBoard {...props} />);
 
-    await user.click(screen.getByLabelText("Learning mode off"));
-    expect(props.onToggleLearning).toHaveBeenCalled();
+    await user.click(screen.getByLabelText("Settings"));
+    expect(props.onOpenSettings).toHaveBeenCalled();
   });
 
   it("hides timer in debug mode", () => {
-    render(<GameBoard {...defaultProps({ phase: "playerBet", playerHand: [{ number: 1, color: "red" }, { number: 2, color: "yellow" }], aiHand: [{ number: 5, color: "yellow" }, { number: 6, color: "yellow" }] })} debugMode={true} />);
-    // Timer component should not render
+    renderWithSettings(
+      <GameBoard
+        {...defaultProps({
+          phase: "playerBet",
+          playerHand: [{ number: 1, color: "red" }, { number: 2, color: "yellow" }],
+          aiHand: [{ number: 5, color: "yellow" }, { number: 6, color: "yellow" }],
+        })}
+        debugMode={true}
+      />
+    );
     expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
   });
 });

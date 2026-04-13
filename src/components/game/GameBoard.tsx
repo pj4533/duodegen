@@ -12,7 +12,6 @@ import PotDisplay from "./PotDisplay";
 import RoundResult from "./RoundResult";
 import Button from "@/components/ui/Button";
 import HandGuide from "@/components/HandGuide";
-import LearningModeToggle from "./LearningModeToggle";
 
 interface GameBoardProps {
   state: GameState;
@@ -21,8 +20,8 @@ interface GameBoardProps {
   handleTimerExpired: () => void;
   newGame: () => void;
   learningEnabled: boolean;
-  onToggleLearning: () => void;
   debugMode?: boolean;
+  onOpenSettings: () => void;
 }
 
 export default function GameBoard({
@@ -32,8 +31,8 @@ export default function GameBoard({
   handleTimerExpired,
   newGame,
   learningEnabled,
-  onToggleLearning,
   debugMode = false,
+  onOpenSettings,
 }: GameBoardProps) {
   const { secondsLeft } = useTimer(
     state.phase === "playerBet",
@@ -60,10 +59,13 @@ export default function GameBoard({
           )}
         </div>
         <div className="flex items-center gap-3">
-          <LearningModeToggle
-            enabled={learningEnabled}
-            onToggle={onToggleLearning}
-          />
+          <button
+            onClick={onOpenSettings}
+            className="text-xs font-heading text-parchment-dark/60 hover:text-gold-light transition-colors tracking-wider uppercase"
+            aria-label="Settings"
+          >
+            Settings
+          </button>
           <button
             onClick={() => setShowGuide(true)}
             className="text-xs font-heading text-gold-dark hover:text-gold-light transition-colors tracking-wider uppercase"

@@ -2,10 +2,15 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import HandLabel from "../HandLabel";
 import { HandRank } from "@/engine/types";
+import { SettingsProvider } from "@/hooks/useSettings";
+
+function renderWithSettings(ui: React.ReactElement) {
+  return render(<SettingsProvider>{ui}</SettingsProvider>);
+}
 
 describe("HandLabel", () => {
   it("displays the hand name", () => {
-    render(
+    renderWithSettings(
       <HandLabel
         result={{ rank: HandRank.Ali, name: "Ali", special: null }}
       />
@@ -14,7 +19,7 @@ describe("HandLabel", () => {
   });
 
   it("displays special hand with standard name", () => {
-    render(
+    renderWithSettings(
       <HandLabel
         result={{ rank: HandRank.MangTong, name: "Mang Tong", special: "judge" }}
       />
@@ -23,12 +28,12 @@ describe("HandLabel", () => {
   });
 
   it("applies winner styling when isWinner", () => {
-    const { container } = render(
+    const { container } = renderWithSettings(
       <HandLabel
         result={{ rank: HandRank.Ali, name: "Ali", special: null }}
         isWinner={true}
       />
     );
-    expect(container.firstChild).toHaveClass("bg-gold-dark/30");
+    expect(container.querySelector("[class*='bg-gold-dark']")).toBeTruthy();
   });
 });

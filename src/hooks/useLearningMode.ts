@@ -1,29 +1,16 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import { GameState, StrategyAdvice } from "@/engine/types";
+import { HandNameStyle } from "@/engine/hand-names";
 import { evaluateHand } from "@/engine/hand-evaluator";
 import { generateAdvice, generateShowdownAdvice } from "@/engine/strategy";
 
-const STORAGE_KEY = "duodegen-learning-mode";
-
-export function useLearningMode(state: GameState) {
-  const [enabled, setEnabled] = useState(false);
-
-  // Hydrate from localStorage after mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === "true") setEnabled(true);
-  }, []);
-
-  const toggle = () => {
-    setEnabled((prev) => {
-      const next = !prev;
-      localStorage.setItem(STORAGE_KEY, String(next));
-      return next;
-    });
-  };
-
+export function useLearningMode(
+  state: GameState,
+  enabled: boolean,
+  nameStyle: HandNameStyle = "crimsonDesert"
+) {
   const advice = useMemo<StrategyAdvice | null>(() => {
     if (!enabled) return null;
     if (!state.playerHand) return null;
@@ -36,7 +23,8 @@ export function useLearningMode(state: GameState) {
       return generateShowdownAdvice(
         state.lastResult.playerHandResult,
         state.lastResult.aiHandResult,
-        state.lastResult.winner
+        state.lastResult.winner,
+        nameStyle
       );
     }
 
@@ -51,10 +39,12 @@ export function useLearningMode(state: GameState) {
       visibleOpponentCard,
       state.revealedPlayerCardIndex,
       state.bet,
-      state.phase
+      state.phase,
+      nameStyle
     );
   }, [
     enabled,
+    nameStyle,
     state.phase,
     state.playerHand,
     state.aiHand,
@@ -64,5 +54,5 @@ export function useLearningMode(state: GameState) {
     state.lastResult,
   ]);
 
-  return { enabled, toggle, advice };
+  return { advice };
 }

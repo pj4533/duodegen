@@ -8,7 +8,8 @@ import {
   HandStrengthTier,
   ActionAdvice,
 } from "./types";
-import { evaluateHand, getHandDisplayName } from "./hand-evaluator";
+import { evaluateHand } from "./hand-evaluator";
+import { getDisplayName, HandNameStyle } from "./hand-names";
 
 // --- Hand Strength Classification ---
 
@@ -384,9 +385,10 @@ export function recommendAction(
 function buildHeadline(
   action: ActionAdvice,
   result: HandResult,
-  tier: HandStrengthTier
+  tier: HandStrengthTier,
+  nameStyle: HandNameStyle
 ): string {
-  const handName = getHandDisplayName(result);
+  const handName = getDisplayName(result.rank, result.special, nameStyle);
   const tierLabels: Record<HandStrengthTier, string> = {
     premium: "elite",
     strong: "strong",
@@ -413,7 +415,8 @@ export function generateAdvice(
   visibleOpponentCard: Stick,
   revealedPlayerCardIndex: 0 | 1,
   betState: BetState,
-  phase: GamePhase
+  phase: GamePhase,
+  nameStyle: HandNameStyle = "crimsonDesert"
 ): StrategyAdvice | null {
   if (phase === "idle" || phase === "dealing" || phase === "rematch") {
     return null;
@@ -465,7 +468,7 @@ export function generateAdvice(
   return {
     recommendedAction: finalAction,
     confidence,
-    headline: buildHeadline(finalAction, playerResult, tier),
+    headline: buildHeadline(finalAction, playerResult, tier, nameStyle),
     reasons: fullReasons.slice(0, 3),
     handStrength: tier,
     handPercentile: percentile,
@@ -482,23 +485,26 @@ export function generateAdvice(
 export function generateShowdownAdvice(
   playerResult: HandResult,
   aiResult: HandResult,
-  winner: "player" | "ai" | "draw"
+  winner: "player" | "ai" | "draw",
+  nameStyle: HandNameStyle = "crimsonDesert"
 ): StrategyAdvice {
   const { tier, percentile } = classifyHandStrength(playerResult);
   const aiTier = classifyHandStrength(aiResult);
+  const pName = getDisplayName(playerResult.rank, playerResult.special, nameStyle);
+  const aName = getDisplayName(aiResult.rank, aiResult.special, nameStyle);
 
   const reasons: string[] = [];
   let headline: string;
 
   if (winner === "player") {
-    headline = `WIN \u2014 Your ${playerResult.name} beat ${aiResult.name}`;
+    headline = `WIN \u2014 Your ${pName} beat ${aName}`;
     if (tier === "premium" || tier === "strong") {
       reasons.push("Strong hand paid off");
     } else if (tier === "weak" || tier === "trash") {
       reasons.push("Lucky win with a weak hand \u2014 don't count on this");
     }
   } else if (winner === "ai") {
-    headline = `LOSS \u2014 ${aiResult.name} beat your ${playerResult.name}`;
+    headline = `LOSS \u2014 ${aName} beat your ${pName}`;
     if (tier === "weak" || tier === "trash") {
       reasons.push("Folding would have saved Silver here");
     }
@@ -506,7 +512,7 @@ export function generateShowdownAdvice(
       reasons.push("Opponent had a strong hand \u2014 hard to avoid");
     }
   } else {
-    headline = `DRAW \u2014 Both had ${playerResult.name}`;
+    headline = `DRAW \u2014 Both had ${pName}`;
     reasons.push("Pot split evenly");
   }
 
@@ -529,7 +535,7 @@ export function generateShowdownAdvice(
     reasons: reasons.slice(0, 3),
     handStrength: tier,
     handPercentile: percentile,
-    opponentThreat: `Opponent had: ${aiResult.name}`,
+    opponentThreat: `Opponent had: ${aName}`,
     blockerNote: null,
     potOdds: null,
     bluffViable: false,

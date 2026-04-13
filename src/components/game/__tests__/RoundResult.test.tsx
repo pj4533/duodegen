@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import RoundResult from "../RoundResult";
 import { RoundResult as RoundResultType, HandRank } from "@/engine/types";
+import { SettingsProvider } from "@/hooks/useSettings";
 
 function makeResult(overrides: Partial<RoundResultType> = {}): RoundResultType {
   return {
@@ -27,48 +28,48 @@ function makeResult(overrides: Partial<RoundResultType> = {}): RoundResultType {
 describe("RoundResult", () => {
   it("shows Victory for player win", () => {
     render(
-      <RoundResult
+      <SettingsProvider><RoundResult
         result={makeResult()}
         onContinue={vi.fn()}
         gameOver={false}
         onNewGame={vi.fn()}
-      />
+      /></SettingsProvider>
     );
     expect(screen.getByText("Victory!")).toBeInTheDocument();
   });
 
   it("shows Defeat for AI win", () => {
     render(
-      <RoundResult
+      <SettingsProvider><RoundResult
         result={makeResult({ winner: "ai" })}
         onContinue={vi.fn()}
         gameOver={false}
         onNewGame={vi.fn()}
-      />
+      /></SettingsProvider>
     );
     expect(screen.getByText("Defeat")).toBeInTheDocument();
   });
 
   it("shows Draw for draw", () => {
     render(
-      <RoundResult
+      <SettingsProvider><RoundResult
         result={makeResult({ winner: "draw" })}
         onContinue={vi.fn()}
         gameOver={false}
         onNewGame={vi.fn()}
-      />
+      /></SettingsProvider>
     );
     expect(screen.getByText("Draw")).toBeInTheDocument();
   });
 
   it("shows special resolution message", () => {
     render(
-      <RoundResult
+      <SettingsProvider><RoundResult
         result={makeResult({ specialResolution: "Judge beats all Pairs 9 and below!" })}
         onContinue={vi.fn()}
         gameOver={false}
         onNewGame={vi.fn()}
-      />
+      /></SettingsProvider>
     );
     expect(screen.getByText("Judge beats all Pairs 9 and below!")).toBeInTheDocument();
   });
@@ -77,12 +78,12 @@ describe("RoundResult", () => {
     const user = userEvent.setup();
     const onContinue = vi.fn();
     render(
-      <RoundResult
+      <SettingsProvider><RoundResult
         result={makeResult()}
         onContinue={onContinue}
         gameOver={false}
         onNewGame={vi.fn()}
-      />
+      /></SettingsProvider>
     );
     await user.click(screen.getByText("Next Round"));
     expect(onContinue).toHaveBeenCalled();
@@ -92,12 +93,12 @@ describe("RoundResult", () => {
     const user = userEvent.setup();
     const onNewGame = vi.fn();
     render(
-      <RoundResult
+      <SettingsProvider><RoundResult
         result={makeResult({ winner: "ai" })}
         onContinue={vi.fn()}
         gameOver={true}
         onNewGame={onNewGame}
-      />
+      /></SettingsProvider>
     );
     expect(screen.getByText("Game Over")).toBeInTheDocument();
     expect(screen.queryByText("Opponent is out of silver!")).not.toBeInTheDocument();
@@ -107,12 +108,12 @@ describe("RoundResult", () => {
 
   it("shows victory message when player wins and game is over", () => {
     render(
-      <RoundResult
+      <SettingsProvider><RoundResult
         result={makeResult({ winner: "player", potWon: 30 })}
         onContinue={vi.fn()}
         gameOver={true}
         onNewGame={vi.fn()}
-      />
+      /></SettingsProvider>
     );
     expect(screen.getByText("Victory!")).toBeInTheDocument();
     expect(screen.getByText("Opponent is out of silver!")).toBeInTheDocument();
@@ -122,12 +123,12 @@ describe("RoundResult", () => {
 
   it("shows hand names", () => {
     render(
-      <RoundResult
+      <SettingsProvider><RoundResult
         result={makeResult()}
         onContinue={vi.fn()}
         gameOver={false}
         onNewGame={vi.fn()}
-      />
+      /></SettingsProvider>
     );
     expect(screen.getByText("9 Pair")).toBeInTheDocument();
     expect(screen.getByText("Ali")).toBeInTheDocument();

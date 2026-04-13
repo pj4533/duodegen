@@ -1,36 +1,46 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import GameBoard from "@/components/game/GameBoard";
 import StrategyAdvisor from "@/components/game/StrategyAdvisor";
+import SettingsModal from "@/components/SettingsModal";
 import { useGameState } from "@/hooks/useGameState";
 import { useLearningMode } from "@/hooks/useLearningMode";
+import { useSettings } from "@/hooks/useSettings";
 
 function PlayContent() {
   const searchParams = useSearchParams();
   const debugMode = searchParams.get("debug") !== null;
+  const { learningMode, handNameStyle } = useSettings();
   const { state, startRound, playerBet, handleTimerExpired, newGame } =
     useGameState();
-  const { enabled, toggle, advice } = useLearningMode(state);
+  const { advice } = useLearningMode(state, learningMode, handNameStyle);
+  const [showSettings, setShowSettings] = useState(false);
+
+  // Learning mode OR debug mode disables the timer
+  const timerDisabled = learningMode || debugMode;
 
   return (
-    <main className="flex-1 flex flex-col md:flex-row items-center md:items-start justify-center gap-4 px-4 py-6">
-      <GameBoard
-        state={state}
-        startRound={startRound}
-        playerBet={playerBet}
-        handleTimerExpired={handleTimerExpired}
-        newGame={newGame}
-        learningEnabled={enabled}
-        onToggleLearning={toggle}
-        debugMode={debugMode}
-      />
-      {enabled && advice && (
-        <StrategyAdvisor advice={advice} phase={state.phase} />
-      )}
-    </main>
+    <>
+      <main className="flex-1 flex flex-col md:flex-row items-center md:items-start justify-center gap-4 px-4 py-6">
+        <GameBoard
+          state={state}
+          startRound={startRound}
+          playerBet={playerBet}
+          handleTimerExpired={handleTimerExpired}
+          newGame={newGame}
+          learningEnabled={learningMode}
+          debugMode={timerDisabled}
+          onOpenSettings={() => setShowSettings(true)}
+        />
+        {learningMode && advice && (
+          <StrategyAdvisor advice={advice} phase={state.phase} />
+        )}
+      </main>
+      <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} />
+    </>
   );
 }
 

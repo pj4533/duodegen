@@ -95,6 +95,7 @@ export default function RulesPage() {
           </h2>
           <div className="space-y-2 text-sm text-parchment-dark leading-relaxed">
             <p>Buy-in: <strong className="text-parchment-light">15 Silver</strong> at the Hernand Inn.</p>
+            <p>Each hand begins with a <strong className="text-parchment-light">1 Silver ante</strong> from each player, seeding the pot with 2 Silver.</p>
             <p>You have <strong className="text-parchment-light">10 seconds</strong> to choose an action. If time runs out, you automatically Call.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">

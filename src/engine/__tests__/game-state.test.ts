@@ -64,6 +64,21 @@ describe("gameReducer", () => {
       expect(next.aiHand).toEqual([stick(3), stick(4)]);
     });
 
+    it("deducts ante from each player and seeds the pot", () => {
+      let state = createInitialGameState();
+      state = gameReducer(state, { type: "START_ROUND" });
+      const next = gameReducer(state, {
+        type: "DEAL_COMPLETE",
+        playerHand: [stick(1), stick(2)],
+        aiHand: [stick(3), stick(4)],
+        revealedAiIndex: 0,
+        revealedPlayerIndex: 1,
+      });
+      expect(next.bet.pot).toBe(2);  // 1 ante per player
+      expect(next.bet.playerSilver).toBe(14);  // 15 - 1
+      expect(next.bet.aiSilver).toBe(14);  // 15 - 1
+    });
+
     it("transitions to aiBet when AI has first turn", () => {
       let state = createInitialGameState();
       state = { ...state, playerHasFirstTurn: false };
@@ -111,7 +126,7 @@ describe("gameReducer", () => {
       expect(next.bet.playerSilver).toBe(12 + 3);
     });
 
-    it("AI check after player check goes to showdown", () => {
+    it("AI check after player check goes to showdown with ante pot", () => {
       const state = stateAfterDeal();
       const afterPlayerCheck = gameReducer(state, {
         type: "PLAYER_BET",
@@ -123,6 +138,8 @@ describe("gameReducer", () => {
         action: "check",
       });
       expect(afterAiCheck.phase).toBe("showdown");
+      // Pot should still have the antes even after both check
+      expect(afterAiCheck.bet.pot).toBe(2);
     });
   });
 

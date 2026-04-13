@@ -1,5 +1,5 @@
 import { GameState, GameAction, BetState } from "./types";
-import { STARTING_SILVER } from "@/lib/constants";
+import { STARTING_SILVER, ANTE_PER_PLAYER } from "@/lib/constants";
 import { applyBet, isBettingComplete } from "./betting";
 
 function createInitialBetState(
@@ -11,6 +11,25 @@ function createInitialBetState(
     currentBet: 0,
     playerSilver,
     aiSilver,
+    playerBetThisRound: 0,
+    aiBetThisRound: 0,
+    lastRaise: 0,
+    bettingStarted: false,
+    playerActed: false,
+    aiActed: false,
+  };
+}
+
+function createBetStateWithAnte(
+  playerSilver: number,
+  aiSilver: number
+): BetState {
+  const ante = Math.min(ANTE_PER_PLAYER, playerSilver, aiSilver);
+  return {
+    pot: ante * 2,
+    currentBet: 0,
+    playerSilver: playerSilver - ante,
+    aiSilver: aiSilver - ante,
     playerBetThisRound: 0,
     aiBetThisRound: 0,
     lastRaise: 0,
@@ -59,7 +78,7 @@ export function gameReducer(
         aiHand: action.aiHand,
         revealedAiCardIndex: action.revealedAiIndex,
         revealedPlayerCardIndex: action.revealedPlayerIndex,
-        bet: createInitialBetState(state.bet.playerSilver, state.bet.aiSilver),
+        bet: createBetStateWithAnte(state.bet.playerSilver, state.bet.aiSilver),
       };
 
     case "PLAYER_BET": {

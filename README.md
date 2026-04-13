@@ -33,12 +33,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### Gameplay
 
 1. Buy in with **15 Silver** (Hernand Inn)
-2. Each player is dealt 2 sticks
-3. You can see one of your opponent's sticks
-4. Single betting round: Check, Call, Half Raise, Double Raise, All In, or Fold
-5. 10-second timer per decision (auto-Call on expiry)
-6. Highest hand wins the pot
-7. Winner gets first turn next round
+2. Each player posts a **1 Silver ante** at the start of each hand
+3. Each player is dealt 2 sticks
+4. You can see one of your opponent's sticks
+5. Single betting round: Check, Call, Half Raise, Double Raise, All In, or Fold
+6. 10-second timer per decision (auto-Call on expiry)
+7. Highest hand wins the pot (minimum pot is 2 Silver from antes)
+8. Winner gets first turn next round
 
 ### Hand Rankings (Best to Worst)
 

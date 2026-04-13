@@ -112,6 +112,28 @@ describe("gameReducer", () => {
       expect(afterAiAction.bet.aiSilver).toBe(12 + 3); // AI gets pot
       expect(afterAiAction.bet.pot).toBe(0); // pot cleared after fold
     });
+
+    it("fold produces a lastResult with specialResolution", () => {
+      const state = stateAfterDeal();
+      const withBet = {
+        ...state,
+        phase: "playerBet" as const,
+        bet: { ...state.bet, currentBet: 3, aiBetThisRound: 3, pot: 5, lastRaise: 3, aiSilver: 12, bettingStarted: true },
+      };
+      const next = gameReducer(withBet, { type: "PLAYER_BET", action: "fold" });
+      expect(next.lastResult).not.toBeNull();
+      expect(next.lastResult!.winner).toBe("ai");
+      expect(next.lastResult!.specialResolution).toBe("You folded");
+      expect(next.lastResult!.potWon).toBe(5);
+    });
+
+    it("all-in as opening bet transitions to aiBet", () => {
+      const state = stateAfterDeal();
+      const next = gameReducer(state, { type: "PLAYER_BET", action: "allIn" });
+      expect(next.phase).toBe("aiBet");
+      expect(next.bet.playerSilver).toBe(0);
+      expect(next.bet.pot).toBe(2 + 14); // ante + all-in
+    });
   });
 
   describe("AI_BET", () => {
@@ -125,6 +147,45 @@ describe("gameReducer", () => {
       const next = gameReducer(withBet, { type: "AI_BET", action: "fold" });
       expect(next.phase).toBe("roundEnd");
       expect(next.bet.playerSilver).toBe(12 + 3);
+    });
+
+    it("AI fold produces a lastResult with specialResolution", () => {
+      const state = stateAfterDeal();
+      const withBet = {
+        ...state,
+        phase: "aiBet" as const,
+        bet: { ...state.bet, currentBet: 14, playerBetThisRound: 14, pot: 16, lastRaise: 14, playerSilver: 0, bettingStarted: true, playerActed: true },
+      };
+      const next = gameReducer(withBet, { type: "AI_BET", action: "fold" });
+      expect(next.lastResult).not.toBeNull();
+      expect(next.lastResult!.winner).toBe("player");
+      expect(next.lastResult!.specialResolution).toBe("Opponent folded");
+      expect(next.lastResult!.potWon).toBe(16);
+    });
+
+    it("AI short all-in completes betting when bets are unequal", () => {
+      const state = stateAfterDeal();
+      // Player went all-in with 14, AI has 12
+      const withBet = {
+        ...state,
+        phase: "aiBet" as const,
+        bet: {
+          ...state.bet,
+          currentBet: 14,
+          playerBetThisRound: 14,
+          playerSilver: 0,
+          aiSilver: 12,
+          pot: 16,
+          lastRaise: 14,
+          bettingStarted: true,
+          playerActed: true,
+        },
+      };
+      const next = gameReducer(withBet, { type: "AI_BET", action: "allIn" });
+      expect(next.phase).toBe("showdown"); // betting complete, go to showdown
+      expect(next.bet.aiSilver).toBe(0);
+      expect(next.bet.aiBetThisRound).toBe(12);
+      expect(next.bet.pot).toBe(28); // 16 + 12
     });
 
     it("AI check after player check goes to showdown with ante pot", () => {

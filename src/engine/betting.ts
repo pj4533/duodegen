@@ -57,8 +57,9 @@ export function getAvailableActions(
     actions.push("doubleRaise");
   }
 
-  // All In
-  if (silver > 0 && silver > toCall) {
+  // All In: available when you have silver and it's not the same as calling
+  // Allows "short all-in" when you can't afford to call the full bet
+  if (silver > 0 && silver !== toCall) {
     actions.push("allIn");
   }
 
@@ -183,10 +184,11 @@ export function isBettingComplete(
     return true;
   }
 
-  // If someone went all-in and the other called (or is also all-in)
+  // If both have acted and at least one is all-in, betting is done
+  // (covers short all-in where bets don't match)
   if (
-    (betState.playerSilver === 0 || betState.aiSilver === 0) &&
-    betState.playerBetThisRound === betState.aiBetThisRound
+    bothActed &&
+    (betState.playerSilver === 0 || betState.aiSilver === 0)
   ) {
     return true;
   }

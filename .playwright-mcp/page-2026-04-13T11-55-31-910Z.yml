@@ -1,0 +1,32 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "DUODEGEN" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - link "Rules" [ref=e5] [cursor=pointer]:
+        - /url: /rules
+    - main [ref=e6]:
+      - generic [ref=e7]:
+        - button "Hand Guide" [ref=e9]
+        - generic [ref=e10]:
+          - generic [ref=e11]: Opponent
+          - generic [ref=e12]:
+            - generic [ref=e15]: ✦
+            - generic [ref=e18]: ✦
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e21]: You
+            - generic [ref=e22]: "15"
+            - generic [ref=e23]: silver
+          - generic [ref=e24]:
+            - generic [ref=e25]: Pot
+            - generic [ref=e26]: "0"
+            - generic [ref=e27]: silver
+          - generic [ref=e28]:
+            - generic [ref=e29]: Opponent
+            - generic [ref=e30]: "15"
+            - generic [ref=e31]: silver
+        - generic [ref=e36]: Your Hand
+        - button "Start Game" [ref=e38]
+  - button "Open Next.js Dev Tools" [ref=e44] [cursor=pointer]:
+    - img [ref=e45]

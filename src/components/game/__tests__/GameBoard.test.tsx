@@ -79,4 +79,10 @@ describe("GameBoard", () => {
     await user.click(screen.getByLabelText("Learning mode off"));
     expect(props.onToggleLearning).toHaveBeenCalled();
   });
+
+  it("hides timer in debug mode", () => {
+    render(<GameBoard {...defaultProps({ phase: "playerBet", playerHand: [{ number: 1, color: "red" }, { number: 2, color: "yellow" }], aiHand: [{ number: 5, color: "yellow" }, { number: 6, color: "yellow" }] })} debugMode={true} />);
+    // Timer component should not render
+    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+  });
 });

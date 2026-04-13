@@ -1,6 +1,7 @@
-import { GameState, GameAction, BetState } from "./types";
+import { GameState, GameAction, BetState, RoundResult } from "./types";
 import { STARTING_SILVER, ANTE_PER_PLAYER } from "@/lib/constants";
 import { applyBet, isBettingComplete } from "./betting";
+import { evaluateHand } from "./hand-evaluator";
 
 function createInitialBetState(
   playerSilver: number,
@@ -36,6 +37,22 @@ function createBetStateWithAnte(
     bettingStarted: false,
     playerActed: false,
     aiActed: false,
+  };
+}
+
+function createFoldResult(
+  state: GameState,
+  folder: "player" | "ai"
+): RoundResult {
+  return {
+    playerHand: state.playerHand!,
+    aiHand: state.aiHand!,
+    playerHandResult: evaluateHand(state.playerHand!),
+    aiHandResult: evaluateHand(state.aiHand!),
+    winner: folder === "player" ? "ai" : "player",
+    potWon: state.bet.pot,
+    wasRematch: false,
+    specialResolution: `${folder === "player" ? "You" : "Opponent"} folded`,
   };
 }
 
@@ -83,9 +100,12 @@ export function gameReducer(
 
     case "PLAYER_BET": {
       if (action.action === "fold") {
+        const foldResult = createFoldResult(state, "player");
         return {
           ...state,
           phase: "roundEnd",
+          lastResult: foldResult,
+          playerHasFirstTurn: false,
           bet: {
             ...state.bet,
             aiSilver: state.bet.aiSilver + state.bet.pot,
@@ -107,9 +127,12 @@ export function gameReducer(
 
     case "AI_BET": {
       if (action.action === "fold") {
+        const foldResult = createFoldResult(state, "ai");
         return {
           ...state,
           phase: "roundEnd",
+          lastResult: foldResult,
+          playerHasFirstTurn: true,
           bet: {
             ...state.bet,
             playerSilver: state.bet.playerSilver + state.bet.pot,

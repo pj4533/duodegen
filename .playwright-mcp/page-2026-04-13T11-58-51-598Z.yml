@@ -1,0 +1,77 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "DUODEGEN" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - link "Rules" [ref=e5] [cursor=pointer]:
+        - /url: /rules
+    - main [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - generic [ref=e55]: Round 1
+          - generic [ref=e9]:
+            - button "Learning mode on" [ref=e53]: Learn
+            - button "Hand Guide" [ref=e13]
+        - generic [ref=e14]:
+          - generic [ref=e15]: Opponent
+          - generic [ref=e16]:
+            - generic [ref=e19]: ✦
+            - generic [ref=e56]:
+              - generic [ref=e59]: "2"
+              - generic [ref=e60]: "Y"
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - generic [ref=e25]: You
+            - generic [ref=e26]: "14"
+            - generic [ref=e27]: silver
+          - generic [ref=e28]:
+            - generic [ref=e29]: Pot
+            - generic [ref=e30]: "2"
+            - generic [ref=e31]: silver
+          - generic [ref=e32]:
+            - generic [ref=e33]: Opponent
+            - generic [ref=e34]: "14"
+            - generic [ref=e35]: silver
+        - timer "10 seconds remaining" [ref=e61]:
+          - generic [ref=e62]:
+            - generic [ref=e63]: TIME
+            - generic [ref=e64]: 10s
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e67]:
+              - generic [ref=e70]: "2"
+              - generic [ref=e71]: R
+            - generic [ref=e72]:
+              - generic [ref=e75]: "7"
+              - generic [ref=e76]: "Y"
+          - generic [ref=e40]: Your Hand
+        - group "Betting actions" [ref=e77]:
+          - button "Check" [ref=e78]
+          - button "Call" [disabled] [ref=e79]
+          - button "Half Raise" [ref=e80]
+          - button "Double Raise" [disabled] [ref=e81]
+          - button "All In" [ref=e82]
+          - button "Fold" [disabled] [ref=e83]
+      - generic [ref=e85]:
+        - button "Strategy Advisor −" [ref=e86]:
+          - generic [ref=e87]: Strategy Advisor
+          - generic [ref=e88]: −
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - generic [ref=e91]: CHECK
+            - generic [ref=e92]: Moderate
+          - paragraph [ref=e93]: CHECK — 9 Points is a decent hand
+          - list [ref=e94]:
+            - listitem [ref=e95]:
+              - generic [ref=e96]: •
+              - text: Wins against 85% of possible hands
+            - listitem [ref=e97]:
+              - generic [ref=e98]: •
+              - text: "You block: 2 Pair"
+          - paragraph [ref=e100]: Shows 2 - below average start
+          - generic [ref=e102]:
+            - generic [ref=e103]: Hand strength
+            - generic [ref=e104]: Top 67%
+  - button "Open Next.js Dev Tools" [ref=e49] [cursor=pointer]:
+    - img [ref=e50]
+  - alert [ref=e43]

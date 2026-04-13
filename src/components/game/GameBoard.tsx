@@ -22,6 +22,7 @@ interface GameBoardProps {
   newGame: () => void;
   learningEnabled: boolean;
   onToggleLearning: () => void;
+  debugMode?: boolean;
 }
 
 export default function GameBoard({
@@ -32,10 +33,12 @@ export default function GameBoard({
   newGame,
   learningEnabled,
   onToggleLearning,
+  debugMode = false,
 }: GameBoardProps) {
   const { secondsLeft } = useTimer(
     state.phase === "playerBet",
-    handleTimerExpired
+    handleTimerExpired,
+    debugMode
   );
   const [showGuide, setShowGuide] = useState(false);
 
@@ -105,7 +108,9 @@ export default function GameBoard({
       )}
 
       {/* Timer */}
-      <Timer secondsLeft={secondsLeft} active={state.phase === "playerBet"} />
+      {!debugMode && (
+        <Timer secondsLeft={secondsLeft} active={state.phase === "playerBet"} />
+      )}
 
       {/* Player Hand */}
       <PlayerHand

@@ -69,6 +69,37 @@ describe("getAvailableActions", () => {
     expect(actions).not.toContain("allIn");
   });
 
+  it("allows short allIn when player cannot afford to call", () => {
+    const state = createInitialBetState(15, 15);
+    state.currentBet = 15;
+    state.aiBetThisRound = 15;
+    state.pot = 17; // 2 ante + 15 from AI
+    state.playerSilver = 13; // less than the 15 needed to call
+    const actions = getAvailableActions(state, "player");
+    expect(actions).not.toContain("call"); // can't afford full call
+    expect(actions).toContain("allIn"); // but can go all-in for less
+    expect(actions).toContain("fold");
+  });
+
+  it("does not allow allIn when silver exactly equals call amount (call covers it)", () => {
+    const state = createInitialBetState(15, 15);
+    state.currentBet = 14;
+    state.aiBetThisRound = 14;
+    state.pot = 16;
+    state.playerSilver = 14; // exactly toCall
+    const actions = getAvailableActions(state, "player");
+    expect(actions).toContain("call");
+    expect(actions).not.toContain("allIn"); // call already achieves the same thing
+  });
+
+  it("allows allIn as opening bet when no bet placed", () => {
+    const state = createInitialBetState(14, 14);
+    state.pot = 2;
+    const actions = getAvailableActions(state, "player");
+    expect(actions).toContain("allIn");
+    expect(actions).toContain("check");
+  });
+
   it("allows halfRaise when pot is non-zero and player has enough silver", () => {
     const state = createInitialBetState(15, 15);
     state.pot = 6;
@@ -223,5 +254,23 @@ describe("isBettingComplete", () => {
     state.playerBetThisRound = 10;
     state.aiBetThisRound = 10;
     expect(isBettingComplete(state, "call", true)).toBe(true);
+  });
+
+  it("complete when both acted and one did a short all-in (unequal bets)", () => {
+    const state = createInitialBetState(15, 15);
+    state.playerSilver = 0;
+    state.playerBetThisRound = 15;
+    state.aiSilver = 0;
+    state.aiBetThisRound = 13; // short all-in, less than player's bet
+    expect(isBettingComplete(state, "allIn", true)).toBe(true);
+  });
+
+  it("not complete when one is all-in but other has not acted", () => {
+    const state = createInitialBetState(15, 15);
+    state.playerSilver = 0;
+    state.playerBetThisRound = 14;
+    state.aiBetThisRound = 0;
+    // bothActed = false, AI hasn't responded yet
+    expect(isBettingComplete(state, "allIn", false)).toBe(false);
   });
 });

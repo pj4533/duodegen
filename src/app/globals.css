@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-crimson-50: #fef2f2;
+  --color-crimson-100: #fde6e6;
+  --color-crimson-200: #fbc4c4;
+  --color-crimson-300: #f59393;
+  --color-crimson-400: #ef5555;
+  --color-crimson-500: #e52e2e;
+  --color-crimson-600: #e11516;
+  --color-crimson-700: #b91c1c;
+  --color-crimson-800: #7f1d1d;
+  --color-crimson-900: #450a0a;
+  --color-crimson-950: #2a0505;
+
+  --color-gold-light: #d4a84b;
+  --color-gold: #ad651f;
+  --color-gold-dark: #7a4a16;
+
+  --color-parchment-light: #edcdac;
+  --color-parchment: #dcceb0;
+  --color-parchment-dark: #c4a882;
+
+  --color-wood-light: #c9a96e;
+  --color-wood-dark: #6b3a2a;
+  --color-wood-grain: #8b6914;
+
+  --font-heading: "Georgia", "Times New Roman", serif;
+  --font-body: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--color-crimson-950);
+  color: var(--color-parchment-light);
+  font-family: var(--font-body);
+}
+
+/* Subtle noise texture overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-crimson-950);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}

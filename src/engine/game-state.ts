@@ -70,6 +70,7 @@ export function createInitialGameState(): GameState {
     rematchCount: 0,
     lastResult: null,
     gameOver: false,
+    actionLog: [],
   };
 }
 
@@ -96,9 +97,15 @@ export function gameReducer(
         revealedAiCardIndex: action.revealedAiIndex,
         revealedPlayerCardIndex: action.revealedPlayerIndex,
         bet: createBetStateWithAnte(state.bet.playerSilver, state.bet.aiSilver),
+        actionLog: [],
       };
 
     case "PLAYER_BET": {
+      const logEntry = {
+        actor: "player" as const,
+        action: action.action,
+        amount: 0,
+      };
       if (action.action === "fold") {
         const foldResult = createFoldResult(state, "player");
         return {
@@ -111,21 +118,28 @@ export function gameReducer(
             aiSilver: state.bet.aiSilver + state.bet.pot,
             pot: 0,
           },
+          actionLog: [...state.actionLog, logEntry],
         };
       }
       const newBet = {
         ...applyBet(state.bet, "player", action.action),
         playerActed: true,
       };
+      logEntry.amount = newBet.playerBetThisRound - state.bet.playerBetThisRound;
       const bothActed = newBet.playerActed && newBet.aiActed;
 
       if (isBettingComplete(newBet, action.action, bothActed)) {
-        return { ...state, phase: "showdown", bet: newBet };
+        return { ...state, phase: "showdown", bet: newBet, actionLog: [...state.actionLog, logEntry] };
       }
-      return { ...state, phase: "aiBet", bet: newBet };
+      return { ...state, phase: "aiBet", bet: newBet, actionLog: [...state.actionLog, logEntry] };
     }
 
     case "AI_BET": {
+      const logEntry = {
+        actor: "ai" as const,
+        action: action.action,
+        amount: 0,
+      };
       if (action.action === "fold") {
         const foldResult = createFoldResult(state, "ai");
         return {
@@ -138,18 +152,20 @@ export function gameReducer(
             playerSilver: state.bet.playerSilver + state.bet.pot,
             pot: 0,
           },
+          actionLog: [...state.actionLog, logEntry],
         };
       }
       const newBet = {
         ...applyBet(state.bet, "ai", action.action),
         aiActed: true,
       };
+      logEntry.amount = newBet.aiBetThisRound - state.bet.aiBetThisRound;
       const bothActed = newBet.playerActed && newBet.aiActed;
 
       if (isBettingComplete(newBet, action.action, bothActed)) {
-        return { ...state, phase: "showdown", bet: newBet };
+        return { ...state, phase: "showdown", bet: newBet, actionLog: [...state.actionLog, logEntry] };
       }
-      return { ...state, phase: "playerBet", bet: newBet };
+      return { ...state, phase: "playerBet", bet: newBet, actionLog: [...state.actionLog, logEntry] };
     }
 
     case "TIMER_EXPIRED":

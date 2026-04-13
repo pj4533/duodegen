@@ -87,6 +87,12 @@ export type GamePhase =
   | "rematch"
   | "roundEnd";
 
+export interface ActionLogEntry {
+  actor: "player" | "ai";
+  action: BetAction;
+  amount: number;
+}
+
 export interface GameState {
   phase: GamePhase;
   deck: Stick[];
@@ -100,6 +106,7 @@ export interface GameState {
   rematchCount: number;
   lastResult: RoundResult | null;
   gameOver: boolean;
+  actionLog: ActionLogEntry[];
 }
 
 export interface RoundResult {

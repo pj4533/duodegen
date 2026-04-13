@@ -12,6 +12,7 @@ import PotDisplay from "./PotDisplay";
 import RoundResult from "./RoundResult";
 import Button from "@/components/ui/Button";
 import HandGuide from "@/components/HandGuide";
+import ActionFeed from "./ActionFeed";
 
 interface GameBoardProps {
   state: GameState;
@@ -91,6 +92,9 @@ export default function GameBoard({
         playerSilver={state.bet.playerSilver}
         aiSilver={state.bet.aiSilver}
       />
+
+      {/* Action Feed */}
+      <ActionFeed entries={state.actionLog} />
 
       {/* Game status messages */}
       {state.phase === "aiBet" && (

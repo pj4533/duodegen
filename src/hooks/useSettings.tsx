@@ -3,8 +3,8 @@
 import {
   createContext,
   useContext,
-  useEffect,
-  useState,
+  useSyncExternalStore,
+  useCallback,
   type ReactNode,
 } from "react";
 import { HandNameStyle } from "@/engine/hand-names";
@@ -43,21 +43,36 @@ const SettingsContext = createContext<SettingsContextValue>({
   updateSettings: () => {},
 });
 
+let settingsSnapshot = DEFAULT_SETTINGS;
+const listeners = new Set<() => void>();
+
+function getSnapshot(): Settings {
+  return settingsSnapshot;
+}
+
+function getServerSnapshot(): Settings {
+  return DEFAULT_SETTINGS;
+}
+
+function subscribe(callback: () => void): () => void {
+  // Re-read localStorage on mount so tests (and late subscribers) pick up current values
+  settingsSnapshot = loadSettings();
+  listeners.add(callback);
+  return () => listeners.delete(callback);
+}
+
+function writeSettings(next: Settings) {
+  settingsSnapshot = next;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  listeners.forEach((l) => l());
+}
+
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const settings = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  // Load from localStorage after hydration to avoid SSR mismatch
-  useEffect(() => {
-    setSettings(loadSettings());
+  const updateSettings = useCallback((patch: Partial<Settings>) => {
+    writeSettings({ ...settingsSnapshot, ...patch });
   }, []);
-
-  const updateSettings = (patch: Partial<Settings>) => {
-    setSettings((prev) => {
-      const next = { ...prev, ...patch };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      return next;
-    });
-  };
 
   return (
     <SettingsContext.Provider

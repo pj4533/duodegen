@@ -31,7 +31,7 @@ export default function Modal({ open, onClose, children, title }: ModalProps) {
   return (
     <dialog
       ref={dialogRef}
-      className="bg-crimson-950 border border-gold-dark/40 rounded-lg p-0 backdrop:bg-black/60 max-w-lg w-full max-h-[80vh] overflow-hidden"
+      className="fixed inset-0 m-auto bg-crimson-950 border border-gold-dark/40 rounded-lg p-0 backdrop:bg-black/60 max-w-lg w-[calc(100%-2rem)] max-h-[80vh] overflow-hidden"
       onClose={onClose}
     >
       <div className="flex flex-col max-h-[80vh]">

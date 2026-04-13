@@ -7,6 +7,7 @@ import GameBoard from "@/components/game/GameBoard";
 import StrategyAdvisor from "@/components/game/StrategyAdvisor";
 import SettingsModal from "@/components/SettingsModal";
 import HandGuide from "@/components/HandGuide";
+import RulesModal from "@/components/RulesModal";
 import { useGameState } from "@/hooks/useGameState";
 import { useLearningMode } from "@/hooks/useLearningMode";
 import { useSettings } from "@/hooks/useSettings";
@@ -20,6 +21,7 @@ function PlayContent() {
   const { advice } = useLearningMode(state, learningMode, handNameStyle);
   const [showSettings, setShowSettings] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [showRules, setShowRules] = useState(false);
 
   // Learning mode OR debug mode disables the timer
   const timerDisabled = learningMode || debugMode;
@@ -47,12 +49,12 @@ function PlayContent() {
           >
             Hand Guide
           </button>
-          <Link
-            href="/rules"
+          <button
+            onClick={() => setShowRules(true)}
             className="text-xs font-heading text-parchment-dark/60 hover:text-parchment-light transition-colors tracking-wider uppercase"
           >
             Rules
-          </Link>
+          </button>
         </div>
       </header>
 
@@ -76,6 +78,7 @@ function PlayContent() {
       </main>
       <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} />
       <HandGuide open={showGuide} onClose={() => setShowGuide(false)} />
+      <RulesModal open={showRules} onClose={() => setShowRules(false)} />
     </>
   );
 }

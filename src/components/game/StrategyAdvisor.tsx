@@ -66,8 +66,8 @@ export default function StrategyAdvisor({
   return (
     <>
       {/* Desktop: side panel */}
-      <div className="hidden md:block w-72 shrink-0">
-        <div className="sticky top-4 border border-gold-dark/20 rounded-lg bg-crimson-950/90 backdrop-blur-sm overflow-hidden">
+      <div className="hidden md:block w-64 shrink-0 mt-10">
+        <div className="sticky top-4 border border-gold-dark/20 rounded-lg bg-crimson-950/80 backdrop-blur-sm overflow-hidden">
           {/* Header */}
           <button
             onClick={() => setCollapsed(!collapsed)}

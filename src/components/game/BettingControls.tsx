@@ -28,7 +28,7 @@ export default function BettingControls({
   const amounts = getBetAmounts(betState, "player");
 
   return (
-    <div className="flex flex-wrap gap-2 justify-center" role="group" aria-label="Betting actions">
+    <div className="grid grid-cols-3 gap-2 w-full max-w-sm" role="group" aria-label="Betting actions">
       {(["allIn", "halfRaise", "doubleRaise", "call", "fold", "check"] as BetAction[]).map(
         (action) => {
           const isAvailable = available.includes(action);

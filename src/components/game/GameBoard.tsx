@@ -51,7 +51,7 @@ export default function GameBoard({
   const isAiWinner = state.lastResult?.winner === "ai";
 
   return (
-    <div className={`flex flex-col items-center gap-6 w-full max-w-lg mx-auto relative z-10 ${learningEnabled ? "pb-16 md:pb-0" : ""}`}>
+    <div className={`flex flex-col items-center gap-4 w-full relative z-10 ${learningEnabled ? "pb-16 md:pb-0" : ""}`}>
       {/* Header */}
       <div className="flex items-center justify-between w-full">
         <div className="text-sm font-heading text-parchment-dark/60">

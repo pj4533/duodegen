@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import GameBoard from "@/components/game/GameBoard";
 
@@ -24,7 +25,9 @@ export default function PlayPage() {
 
       {/* Game Area */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-6">
-        <GameBoard />
+        <Suspense>
+          <GameBoard />
+        </Suspense>
       </main>
     </div>
   );

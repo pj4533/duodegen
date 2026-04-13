@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import PlayPage from "../play/page";
 
+vi.mock("next/navigation", () => ({
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 describe("Play page", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });

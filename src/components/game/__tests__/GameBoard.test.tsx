@@ -3,6 +3,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import GameBoard from "../GameBoard";
 
+vi.mock("next/navigation", () => ({
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 describe("GameBoard", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });

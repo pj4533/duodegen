@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useGameState } from "@/hooks/useGameState";
 import { useTimer } from "@/hooks/useTimer";
 import { evaluateHand } from "@/engine/hand-evaluator";
@@ -14,11 +15,14 @@ import Button from "@/components/ui/Button";
 import HandGuide from "@/components/HandGuide";
 
 export default function GameBoard() {
+  const searchParams = useSearchParams();
+  const debugMode = searchParams.get("debug") !== null;
   const { state, startRound, playerBet, handleTimerExpired, newGame } =
     useGameState();
   const { secondsLeft } = useTimer(
     state.phase === "playerBet",
-    handleTimerExpired
+    handleTimerExpired,
+    debugMode
   );
   const [showGuide, setShowGuide] = useState(false);
 
@@ -82,7 +86,9 @@ export default function GameBoard() {
       )}
 
       {/* Timer */}
-      <Timer secondsLeft={secondsLeft} active={state.phase === "playerBet"} />
+      {!debugMode && (
+        <Timer secondsLeft={secondsLeft} active={state.phase === "playerBet"} />
+      )}
 
       {/* Player Hand */}
       <PlayerHand

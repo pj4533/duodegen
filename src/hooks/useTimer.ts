@@ -5,7 +5,8 @@ import { TIMER_DURATION_SECONDS } from "@/lib/constants";
 
 export function useTimer(
   active: boolean,
-  onExpire: () => void
+  onExpire: () => void,
+  disabled: boolean = false
 ): { secondsLeft: number } {
   const startTimeRef = useRef<number | null>(null);
   const expiredRef = useRef(false);
@@ -30,7 +31,7 @@ export function useTimer(
   }, []);
 
   useEffect(() => {
-    if (active) {
+    if (active && !disabled) {
       startTimeRef.current = Date.now();
       expiredRef.current = false;
       notify();
@@ -55,7 +56,7 @@ export function useTimer(
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [active, notify]);
+  }, [active, disabled, notify]);
 
   const getSnapshot = useCallback(() => {
     if (!active || !startTimeRef.current) return TIMER_DURATION_SECONDS;

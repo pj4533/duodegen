@@ -10,15 +10,11 @@ export default function GitHubCorner() {
       aria-label="View source on GitHub"
     >
       <svg
-        width="80"
-        height="80"
         viewBox="0 0 250 250"
+        className="w-16 h-16 sm:w-20 sm:h-20 absolute top-0 right-0"
         style={{
           fill: "var(--color-gold-dark)",
           color: "var(--color-crimson-950)",
-          position: "absolute",
-          top: 0,
-          right: 0,
           border: 0,
         }}
         aria-hidden="true"

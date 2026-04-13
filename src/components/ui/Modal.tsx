@@ -36,7 +36,7 @@ export default function Modal({ open, onClose, children, title }: ModalProps) {
     >
       <div className="flex flex-col max-h-[80vh]">
         {title && (
-          <div className="flex items-center justify-between px-5 py-3 border-b border-gold-dark/20">
+          <div className="flex items-center justify-between px-4 sm:px-5 py-2 sm:py-3 border-b border-gold-dark/20">
             <h2 className="font-heading text-lg text-gold-light tracking-wide">
               {title}
             </h2>
@@ -48,7 +48,7 @@ export default function Modal({ open, onClose, children, title }: ModalProps) {
             </button>
           </div>
         )}
-        <div className="overflow-y-auto p-5 text-parchment-dark">{children}</div>
+        <div className="overflow-y-auto p-4 sm:p-5 text-parchment-dark">{children}</div>
       </div>
     </dialog>
   );

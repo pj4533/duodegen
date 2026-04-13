@@ -11,7 +11,7 @@ export default function RulesPage() {
 
   return (
     <div className="flex flex-1 flex-col relative z-10">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-gold-dark/10">
+      <header className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 border-b border-gold-dark/10">
         <Link
           href="/"
           className="font-heading text-lg text-gold-dark hover:text-gold-light transition-colors tracking-wider"
@@ -93,7 +93,7 @@ export default function RulesPage() {
                 <span className="text-gold-dark/60 text-xs font-heading w-8 text-right shrink-0">
                   {i + 1}
                 </span>
-                <span className="font-heading text-parchment-light min-w-[100px]">
+                <span className="font-heading text-parchment-light min-w-[80px] sm:min-w-[100px]">
                   {r.name}
                 </span>
                 <span className="text-parchment-dark/70 text-xs">{r.cards}</span>

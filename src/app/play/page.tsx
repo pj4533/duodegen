@@ -29,29 +29,29 @@ function PlayContent() {
   return (
     <>
       {/* Nav */}
-      <header className="flex items-center justify-between px-4 pr-24 py-3 border-b border-gold-dark/10">
+      <header className="flex items-center justify-between px-3 sm:px-4 pr-16 sm:pr-24 py-2 sm:py-3 border-b border-gold-dark/10">
         <Link
           href="/"
           className="font-heading text-lg text-gold-dark hover:text-gold-light transition-colors tracking-wider"
         >
           DUODEGEN
         </Link>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
             onClick={() => setShowSettings(true)}
-            className="text-xs font-heading text-parchment-dark/60 hover:text-gold-light transition-colors tracking-wider uppercase"
+            className="text-[10px] sm:text-xs font-heading text-parchment-dark/60 hover:text-gold-light transition-colors tracking-wider uppercase"
           >
             Settings
           </button>
           <button
             onClick={() => setShowGuide(true)}
-            className="text-xs font-heading text-gold-dark hover:text-gold-light transition-colors tracking-wider uppercase"
+            className="text-[10px] sm:text-xs font-heading text-gold-dark hover:text-gold-light transition-colors tracking-wider uppercase"
           >
             Hand Guide
           </button>
           <button
             onClick={() => setShowRules(true)}
-            className="text-xs font-heading text-parchment-dark/60 hover:text-parchment-light transition-colors tracking-wider uppercase"
+            className="text-[10px] sm:text-xs font-heading text-parchment-dark/60 hover:text-parchment-light transition-colors tracking-wider uppercase"
           >
             Rules
           </button>

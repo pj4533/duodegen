@@ -19,7 +19,7 @@ describe("HandGuide", () => {
     renderWithSettings(<HandGuide open={true} onClose={vi.fn()} />);
     expect(screen.getByText("Hand Rankings")).toBeInTheDocument();
     expect(screen.getByText("Prime Pair")).toBeInTheDocument();
-    expect(screen.getByText("Mang Tong")).toBeInTheDocument();
+    expect(screen.getByText("Zero")).toBeInTheDocument();
   });
 
   it("shows special hands section", () => {

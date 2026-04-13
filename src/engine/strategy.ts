@@ -86,8 +86,10 @@ export interface OpponentAnalysis {
 
 export function analyzeOpponentVisible(
   visibleCard: Stick,
-  playerHand: [Stick, Stick]
+  playerHand: [Stick, Stick],
+  nameStyle: HandNameStyle = "crimsonDesert"
 ): OpponentAnalysis {
+  const cd = nameStyle === "crimsonDesert";
   const num = visibleCard.number;
   const isRed = visibleCard.color === "red";
   const playerNums = [playerHand[0].number, playerHand[1].number];
@@ -108,14 +110,14 @@ export function analyzeOpponentVisible(
     }
     if (!playerNums.includes(1)) possibleStrong.push("1 Pair");
     else blockedHands.push("1 Pair");
-    if (!playerNums.includes(2)) possibleStrong.push("Ali (1+2)");
-    else blockedHands.push("Ali");
-    if (!playerNums.includes(4)) possibleStrong.push("Dok Sa (1+4)");
-    else blockedHands.push("Dok Sa");
-    if (!playerNums.includes(9)) possibleStrong.push("Gu Bing (1+9)");
-    else blockedHands.push("Gu Bing");
-    if (!playerNums.includes(10)) possibleStrong.push("Jang Bing (1+10)");
-    else blockedHands.push("Jang Bing");
+    if (!playerNums.includes(2)) possibleStrong.push(`${cd ? "One-Two" : "Ali"} (1+2)`);
+    else blockedHands.push(cd ? "One-Two" : "Ali");
+    if (!playerNums.includes(4)) possibleStrong.push(`${cd ? "One-Four" : "Dok-sa"} (1+4)`);
+    else blockedHands.push(cd ? "One-Four" : "Dok-sa");
+    if (!playerNums.includes(9)) possibleStrong.push(`${cd ? "One-Nine" : "Gu-bing"} (1+9)`);
+    else blockedHands.push(cd ? "One-Nine" : "Gu-bing");
+    if (!playerNums.includes(10)) possibleStrong.push(`${cd ? "One-Ten" : "Jang-bing"} (1+10)`);
+    else blockedHands.push(cd ? "One-Ten" : "Jang-bing");
   } else if (num === 3) {
     if (isRed && !playerCards.includes("R8")) {
       possibleStrong.push("Prime Pair (R3+R8)");
@@ -137,12 +139,12 @@ export function analyzeOpponentVisible(
   } else if (num === 4) {
     if (!playerNums.includes(4)) possibleStrong.push("4 Pair");
     else blockedHands.push("4 Pair");
-    if (!playerNums.includes(1)) possibleStrong.push("Dok Sa (1+4)");
-    else blockedHands.push("Dok Sa");
-    if (!playerNums.includes(10)) possibleStrong.push("Jang Sa (4+10)");
-    else blockedHands.push("Jang Sa");
-    if (!playerNums.includes(6)) possibleStrong.push("Sel Ryuk (4+6)");
-    else blockedHands.push("Sel Ryuk");
+    if (!playerNums.includes(1)) possibleStrong.push(`${cd ? "One-Four" : "Dok-sa"} (1+4)`);
+    else blockedHands.push(cd ? "One-Four" : "Dok-sa");
+    if (!playerNums.includes(10)) possibleStrong.push(`${cd ? "Four-Ten" : "Jang-sa"} (4+10)`);
+    else blockedHands.push(cd ? "Four-Ten" : "Jang-sa");
+    if (!playerNums.includes(6)) possibleStrong.push(`${cd ? "Four-Six" : "Se-ryuk"} (4+6)`);
+    else blockedHands.push(cd ? "Four-Six" : "Se-ryuk");
     if (isRed && !playerCards.includes("R7")) possibleStrong.push("Executor (R4+R7)");
     else if (isRed && playerCards.includes("R7")) blockedHands.push("Executor");
     if (isRed && !playerCards.includes("R9")) possibleStrong.push("High Warden (R4+R9)");
@@ -159,8 +161,8 @@ export function analyzeOpponentVisible(
   } else if (num === 9) {
     if (!playerNums.includes(9)) possibleStrong.push("9 Pair");
     else blockedHands.push("9 Pair");
-    if (!playerNums.includes(1)) possibleStrong.push("Gu Bing (1+9)");
-    else blockedHands.push("Gu Bing");
+    if (!playerNums.includes(1)) possibleStrong.push(`${cd ? "One-Nine" : "Gu-bing"} (1+9)`);
+    else blockedHands.push(cd ? "One-Nine" : "Gu-bing");
     if (!playerNums.includes(4)) possibleStrong.push("Warden (4+9)");
     else blockedHands.push("Warden");
     if (isRed && !playerCards.includes("R4")) possibleStrong.push("High Warden (R4+R9)");
@@ -168,23 +170,23 @@ export function analyzeOpponentVisible(
   } else if (num === 10) {
     if (!playerNums.includes(10)) possibleStrong.push("10 Pair");
     else blockedHands.push("10 Pair");
-    if (!playerNums.includes(1)) possibleStrong.push("Jang Bing (1+10)");
-    else blockedHands.push("Jang Bing");
-    if (!playerNums.includes(4)) possibleStrong.push("Jang Sa (4+10)");
-    else blockedHands.push("Jang Sa");
+    if (!playerNums.includes(1)) possibleStrong.push(`${cd ? "One-Ten" : "Jang-bing"} (1+10)`);
+    else blockedHands.push(cd ? "One-Ten" : "Jang-bing");
+    if (!playerNums.includes(4)) possibleStrong.push(`${cd ? "Four-Ten" : "Jang-sa"} (4+10)`);
+    else blockedHands.push(cd ? "Four-Ten" : "Jang-sa");
   } else if (num === 2) {
     if (!playerNums.includes(2)) possibleStrong.push("2 Pair");
     else blockedHands.push("2 Pair");
-    if (!playerNums.includes(1)) possibleStrong.push("Ali (1+2)");
-    else blockedHands.push("Ali");
+    if (!playerNums.includes(1)) possibleStrong.push(`${cd ? "One-Two" : "Ali"} (1+2)`);
+    else blockedHands.push(cd ? "One-Two" : "Ali");
   } else if (num === 5) {
     if (!playerNums.includes(5)) possibleStrong.push("5 Pair");
     else blockedHands.push("5 Pair");
   } else if (num === 6) {
     if (!playerNums.includes(6)) possibleStrong.push("6 Pair");
     else blockedHands.push("6 Pair");
-    if (!playerNums.includes(4)) possibleStrong.push("Sel Ryuk (4+6)");
-    else blockedHands.push("Sel Ryuk");
+    if (!playerNums.includes(4)) possibleStrong.push(`${cd ? "Four-Six" : "Se-ryuk"} (4+6)`);
+    else blockedHands.push(cd ? "Four-Six" : "Se-ryuk");
   }
 
   // Determine threat level
@@ -423,7 +425,7 @@ export function generateAdvice(
   }
 
   const { tier, percentile } = classifyHandStrength(playerResult);
-  const opponentAnalysis = analyzeOpponentVisible(visibleOpponentCard, playerHand);
+  const opponentAnalysis = analyzeOpponentVisible(visibleOpponentCard, playerHand, nameStyle);
   const isFacingBet = betState.currentBet > betState.playerBetThisRound;
   const potOdds = calculatePotOdds(betState);
   const winProb = calculateWinProbability(playerHand, visibleOpponentCard);

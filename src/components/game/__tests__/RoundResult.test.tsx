@@ -131,6 +131,6 @@ describe("RoundResult", () => {
       /></SettingsProvider>
     );
     expect(screen.getByText("9 Pair")).toBeInTheDocument();
-    expect(screen.getByText("Ali")).toBeInTheDocument();
+    expect(screen.getByText("One-Two")).toBeInTheDocument();
   });
 });

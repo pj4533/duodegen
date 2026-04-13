@@ -89,7 +89,7 @@ describe("evaluateHand", () => {
     it("1+2 is Ali", () => {
       const result = evaluateHand([stick(1), stick(2)]);
       expect(result.rank).toBe(HandRank.Ali);
-      expect(result.name).toBe("Ali");
+      expect(result.name).toBe("One-Two");
     });
 
     it("1+4 is Dok Sa", () => {
@@ -155,7 +155,7 @@ describe("evaluateHand", () => {
     it("2+7 = 9 Points (Perfect Nine)", () => {
       const result = evaluateHand([stick(2, "yellow"), stick(7, "yellow")]);
       expect(result.rank).toBe(HandRank.PerfectNine);
-      expect(result.name).toBe("9 Points");
+      expect(result.name).toBe("Perfect Nine");
     });
 
     it("3+5 = 8 Points", () => {
@@ -186,7 +186,7 @@ describe("evaluateHand", () => {
     it("2+8 = Mang Tong (0 points)", () => {
       const result = evaluateHand([stick(2, "yellow"), stick(8, "yellow")]);
       expect(result.rank).toBe(HandRank.MangTong);
-      expect(result.name).toBe("Mang Tong");
+      expect(result.name).toBe("Zero");
     });
 
     it("5+5 pair beats 9 Points", () => {
@@ -255,13 +255,13 @@ describe("getHandDisplayName", () => {
     const result = evaluateHand([stick(3, "yellow"), stick(7, "yellow")]);
     const name = getHandDisplayName(result);
     expect(name).toContain("Judge");
-    expect(name).toContain("Mang Tong");
+    expect(name).toContain("Zero");
   });
 
   it("shows standard name for non-special hands", () => {
     const result = evaluateHand([stick(1, "yellow"), stick(2, "yellow")]);
     const name = getHandDisplayName(result);
-    expect(name).toBe("Ali");
+    expect(name).toBe("One-Two");
   });
 });
 

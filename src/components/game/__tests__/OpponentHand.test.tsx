@@ -2,10 +2,15 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import OpponentHand from "../OpponentHand";
 import { HandRank } from "@/engine/types";
+import { SettingsProvider } from "@/hooks/useSettings";
+
+function renderWithSettings(ui: React.ReactElement) {
+  return render(<SettingsProvider>{ui}</SettingsProvider>);
+}
 
 describe("OpponentHand", () => {
   it("shows one card and hides the other", () => {
-    render(
+    renderWithSettings(
       <OpponentHand
         hand={[
           { number: 3, color: "red" },
@@ -19,7 +24,7 @@ describe("OpponentHand", () => {
   });
 
   it("reveals second card when revealedIndex is 1", () => {
-    render(
+    renderWithSettings(
       <OpponentHand
         hand={[
           { number: 3, color: "red" },
@@ -33,7 +38,7 @@ describe("OpponentHand", () => {
   });
 
   it("shows all cards when showAll is true", () => {
-    render(
+    renderWithSettings(
       <OpponentHand
         hand={[
           { number: 3, color: "red" },
@@ -48,7 +53,7 @@ describe("OpponentHand", () => {
   });
 
   it("shows face-down sticks when no hand", () => {
-    const { container } = render(
+    const { container } = renderWithSettings(
       <OpponentHand hand={null} revealedIndex={0} />
     );
     expect(container.querySelectorAll("div")).toBeTruthy();
@@ -56,7 +61,7 @@ describe("OpponentHand", () => {
   });
 
   it("shows hand result when showResult is true", () => {
-    render(
+    renderWithSettings(
       <OpponentHand
         hand={[
           { number: 1, color: "red" },
@@ -64,10 +69,10 @@ describe("OpponentHand", () => {
         ]}
         revealedIndex={0}
         showAll={true}
-        handResult={{ rank: HandRank.Ali, name: "Ali", special: null }}
+        handResult={{ rank: HandRank.Ali, name: "One-Two", special: null }}
         showResult={true}
       />
     );
-    expect(screen.getByText("Ali")).toBeInTheDocument();
+    expect(screen.getByText("One-Two")).toBeInTheDocument();
   });
 });

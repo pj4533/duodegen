@@ -21,13 +21,13 @@ const CRIMSON_DESERT_NAMES: HandNameSet = {
     [HandRank.Pair3]: "3 Pair",
     [HandRank.Pair2]: "2 Pair",
     [HandRank.Pair1]: "1 Pair",
-    [HandRank.Ali]: "Ali",
-    [HandRank.DokSa]: "Dok Sa",
-    [HandRank.GuBing]: "Gu Bing",
-    [HandRank.JangBing]: "Jang Bing",
-    [HandRank.JangSa]: "Jang Sa",
-    [HandRank.SelRyuk]: "Sel Ryuk",
-    [HandRank.PerfectNine]: "9 Points",
+    [HandRank.Ali]: "One-Two",
+    [HandRank.DokSa]: "One-Four",
+    [HandRank.GuBing]: "One-Nine",
+    [HandRank.JangBing]: "One-Ten",
+    [HandRank.JangSa]: "Four-Ten",
+    [HandRank.SelRyuk]: "Four-Six",
+    [HandRank.PerfectNine]: "Perfect Nine",
     [HandRank.Points8]: "8 Points",
     [HandRank.Points7]: "7 Points",
     [HandRank.Points6]: "6 Points",
@@ -36,7 +36,7 @@ const CRIMSON_DESERT_NAMES: HandNameSet = {
     [HandRank.Points3]: "3 Points",
     [HandRank.Points2]: "2 Points",
     [HandRank.Points1]: "1 Point",
-    [HandRank.MangTong]: "Mang Tong",
+    [HandRank.MangTong]: "Zero",
   },
   specials: {
     judge: "Judge",
@@ -163,7 +163,7 @@ export function getSpecialsGuide(style: HandNameStyle) {
       name: names.specials.warden,
       cards: "4 + 9",
       effect: style === "crimsonDesert"
-        ? "Rematch if opponent has Ali or lower."
+        ? "Rematch if opponent has One-Two or lower."
         : "Rematch if opponent has Ali or lower.",
     },
     {

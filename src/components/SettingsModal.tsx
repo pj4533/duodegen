@@ -71,7 +71,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                   Crimson Desert
                 </span>
                 <p className="text-xs text-parchment-dark/60">
-                  Prime Pair, Judge, Executor, Mang Tong...
+                  Prime Pair, Judge, Executor, One-Two, Zero...
                 </p>
               </div>
             </label>

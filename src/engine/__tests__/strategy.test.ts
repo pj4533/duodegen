@@ -168,9 +168,9 @@ describe("analyzeOpponentVisible", () => {
       [stick(5, "yellow"), stick(2, "yellow")] // don't hold 6, 7, 9, 10 so they're all possible
     );
     expect(analysis.threatLevel).toBe("moderate");
-    expect(analysis.possibleStrong).toContain("Dok Sa (1+4)");
-    expect(analysis.possibleStrong).toContain("Jang Sa (4+10)");
-    expect(analysis.possibleStrong).toContain("Sel Ryuk (4+6)");
+    expect(analysis.possibleStrong).toContain("One-Four (1+4)");
+    expect(analysis.possibleStrong).toContain("Four-Ten (4+10)");
+    expect(analysis.possibleStrong).toContain("Four-Six (4+6)");
     expect(analysis.possibleStrong).toContain("Executor (R4+R7)");
     expect(analysis.possibleStrong).toContain("High Warden (R4+R9)");
     expect(analysis.possibleStrong).toContain("Warden (4+9)");
@@ -225,7 +225,7 @@ describe("analyzeOpponentVisible", () => {
       [stick(5, "yellow"), stick(6, "yellow")]
     );
     expect(analysis.threatLevel).toBe("moderate");
-    expect(analysis.possibleStrong).toContain("Gu Bing (1+9)");
+    expect(analysis.possibleStrong).toContain("One-Nine (1+9)");
     expect(analysis.possibleStrong).toContain("Warden (4+9)");
   });
 
@@ -244,8 +244,8 @@ describe("analyzeOpponentVisible", () => {
     );
     expect(analysis.threatLevel).toBe("moderate");
     expect(analysis.possibleStrong).toContain("10 Pair");
-    expect(analysis.possibleStrong).toContain("Jang Bing (1+10)");
-    expect(analysis.possibleStrong).toContain("Jang Sa (4+10)");
+    expect(analysis.possibleStrong).toContain("One-Ten (1+10)");
+    expect(analysis.possibleStrong).toContain("Four-Ten (4+10)");
   });
 
   it("analyzes opponent showing 2 (low threat)", () => {
@@ -254,7 +254,7 @@ describe("analyzeOpponentVisible", () => {
       [stick(5, "yellow"), stick(6, "yellow")]
     );
     expect(analysis.threatLevel).toBe("low");
-    expect(analysis.possibleStrong).toContain("Ali (1+2)");
+    expect(analysis.possibleStrong).toContain("One-Two (1+2)");
     expect(analysis.possibleStrong).toContain("2 Pair");
   });
 
@@ -264,7 +264,7 @@ describe("analyzeOpponentVisible", () => {
       [stick(5, "yellow"), stick(2, "yellow")]
     );
     expect(analysis.threatLevel).toBe("low");
-    expect(analysis.possibleStrong).toContain("Sel Ryuk (4+6)");
+    expect(analysis.possibleStrong).toContain("Four-Six (4+6)");
     expect(analysis.possibleStrong).toContain("6 Pair");
   });
 
@@ -274,7 +274,7 @@ describe("analyzeOpponentVisible", () => {
       [stick(10, "red"), stick(1, "red")]
     );
     expect(analysis.blockedHands).toContain("10 Pair");
-    expect(analysis.blockedHands).toContain("Jang Bing");
+    expect(analysis.blockedHands).toContain("One-Ten");
   });
 
   it("blocks warden when player holds 4 against 9", () => {
@@ -298,7 +298,79 @@ describe("analyzeOpponentVisible", () => {
       stick(2, "yellow"),
       [stick(1, "red"), stick(5, "yellow")]
     );
+    expect(analysis.blockedHands).toContain("One-Two");
+  });
+
+  it("uses traditional names when nameStyle is traditional", () => {
+    // Opponent showing 1 with traditional style
+    const analysis1 = analyzeOpponentVisible(
+      stick(1, "red"),
+      [stick(5, "yellow"), stick(6, "yellow")],
+      "traditional"
+    );
+    expect(analysis1.possibleStrong).toContain("Ali (1+2)");
+    expect(analysis1.possibleStrong).toContain("Dok-sa (1+4)");
+    expect(analysis1.possibleStrong).toContain("Gu-bing (1+9)");
+    expect(analysis1.possibleStrong).toContain("Jang-bing (1+10)");
+
+    // Opponent showing 4 with traditional style
+    const analysis4 = analyzeOpponentVisible(
+      stick(4, "red"),
+      [stick(5, "yellow"), stick(2, "yellow")],
+      "traditional"
+    );
+    expect(analysis4.possibleStrong).toContain("Dok-sa (1+4)");
+    expect(analysis4.possibleStrong).toContain("Jang-sa (4+10)");
+    expect(analysis4.possibleStrong).toContain("Se-ryuk (4+6)");
+
+    // Opponent showing 9 with traditional style
+    const analysis9 = analyzeOpponentVisible(
+      stick(9, "yellow"),
+      [stick(5, "yellow"), stick(6, "yellow")],
+      "traditional"
+    );
+    expect(analysis9.possibleStrong).toContain("Gu-bing (1+9)");
+
+    // Opponent showing 10 with traditional style
+    const analysis10 = analyzeOpponentVisible(
+      stick(10, "yellow"),
+      [stick(5, "yellow"), stick(6, "yellow")],
+      "traditional"
+    );
+    expect(analysis10.possibleStrong).toContain("Jang-bing (1+10)");
+    expect(analysis10.possibleStrong).toContain("Jang-sa (4+10)");
+
+    // Opponent showing 2 with traditional style
+    const analysis2 = analyzeOpponentVisible(
+      stick(2, "yellow"),
+      [stick(5, "yellow"), stick(6, "yellow")],
+      "traditional"
+    );
+    expect(analysis2.possibleStrong).toContain("Ali (1+2)");
+
+    // Opponent showing 6 with traditional style
+    const analysis6 = analyzeOpponentVisible(
+      stick(6, "yellow"),
+      [stick(5, "yellow"), stick(2, "yellow")],
+      "traditional"
+    );
+    expect(analysis6.possibleStrong).toContain("Se-ryuk (4+6)");
+  });
+
+  it("uses traditional blocker names when nameStyle is traditional", () => {
+    const analysis = analyzeOpponentVisible(
+      stick(2, "yellow"),
+      [stick(1, "red"), stick(5, "yellow")],
+      "traditional"
+    );
     expect(analysis.blockedHands).toContain("Ali");
+
+    const analysis10 = analyzeOpponentVisible(
+      stick(10, "yellow"),
+      [stick(10, "red"), stick(1, "red")],
+      "traditional"
+    );
+    expect(analysis10.blockedHands).toContain("Jang-bing");
   });
 });
 
@@ -599,7 +671,7 @@ describe("generateShowdownAdvice", () => {
     const aiResult = evaluateHand([stick(5, "yellow"), stick(6, "yellow")]); // 1 Point
     const advice = generateShowdownAdvice(playerResult, aiResult, "player");
     expect(advice.headline).toContain("WIN");
-    expect(advice.headline).toContain("Ali");
+    expect(advice.headline).toContain("One-Two");
   });
 
   it("generates loss advice", () => {

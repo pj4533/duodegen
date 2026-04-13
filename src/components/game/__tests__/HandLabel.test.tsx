@@ -15,7 +15,7 @@ describe("HandLabel", () => {
         result={{ rank: HandRank.Ali, name: "Ali", special: null }}
       />
     );
-    expect(screen.getByText("Ali")).toBeInTheDocument();
+    expect(screen.getByText("One-Two")).toBeInTheDocument();
   });
 
   it("displays special hand with standard name", () => {
@@ -24,7 +24,7 @@ describe("HandLabel", () => {
         result={{ rank: HandRank.MangTong, name: "Mang Tong", special: "judge" }}
       />
     );
-    expect(screen.getByText("Judge (Mang Tong)")).toBeInTheDocument();
+    expect(screen.getByText("Judge (Zero)")).toBeInTheDocument();
   });
 
   it("applies winner styling when isWinner", () => {

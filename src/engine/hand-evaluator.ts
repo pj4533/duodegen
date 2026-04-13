@@ -13,13 +13,13 @@ const HAND_NAMES: Record<HandRank, string> = {
   [HandRank.Pair3]: "3 Pair",
   [HandRank.Pair2]: "2 Pair",
   [HandRank.Pair1]: "1 Pair",
-  [HandRank.Ali]: "Ali",
-  [HandRank.DokSa]: "Dok Sa",
-  [HandRank.GuBing]: "Gu Bing",
-  [HandRank.JangBing]: "Jang Bing",
-  [HandRank.JangSa]: "Jang Sa",
-  [HandRank.SelRyuk]: "Sel Ryuk",
-  [HandRank.PerfectNine]: "9 Points",
+  [HandRank.Ali]: "One-Two",
+  [HandRank.DokSa]: "One-Four",
+  [HandRank.GuBing]: "One-Nine",
+  [HandRank.JangBing]: "One-Ten",
+  [HandRank.JangSa]: "Four-Ten",
+  [HandRank.SelRyuk]: "Four-Six",
+  [HandRank.PerfectNine]: "Perfect Nine",
   [HandRank.Points8]: "8 Points",
   [HandRank.Points7]: "7 Points",
   [HandRank.Points6]: "6 Points",
@@ -28,7 +28,7 @@ const HAND_NAMES: Record<HandRank, string> = {
   [HandRank.Points3]: "3 Points",
   [HandRank.Points2]: "2 Points",
   [HandRank.Points1]: "1 Point",
-  [HandRank.MangTong]: "Mang Tong",
+  [HandRank.MangTong]: "Zero",
 };
 
 function sortedNumbers(hand: [Stick, Stick]): [number, number] {
@@ -184,7 +184,7 @@ export function resolveShowdown(
     // Judge becomes Zero against Ten Pair or higher
     const judgeAsMangTong: HandResult = {
       rank: HandRank.MangTong,
-      name: "Mang Tong",
+      name: "Zero",
       special: null,
     };
     return resolveStandard(judgeAsMangTong, hand2Result);
@@ -199,7 +199,7 @@ export function resolveShowdown(
     }
     const judgeAsMangTong: HandResult = {
       rank: HandRank.MangTong,
-      name: "Mang Tong",
+      name: "Zero",
       special: null,
     };
     return resolveStandard(hand1Result, judgeAsMangTong);

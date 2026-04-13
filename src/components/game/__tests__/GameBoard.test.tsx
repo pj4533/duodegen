@@ -15,7 +15,6 @@ function defaultProps(overrides?: Partial<GameState>) {
     handleTimerExpired: vi.fn(),
     newGame: vi.fn(),
     learningEnabled: false,
-    onOpenSettings: vi.fn(),
   };
 }
 
@@ -37,27 +36,9 @@ describe("GameBoard", () => {
     expect(screen.getByText("Start Game")).toBeInTheDocument();
   });
 
-  it("renders Hand Guide button", () => {
-    renderWithSettings(<GameBoard {...defaultProps()} />);
-    expect(screen.getByText("Hand Guide")).toBeInTheDocument();
-  });
-
-  it("renders Settings button", () => {
-    renderWithSettings(<GameBoard {...defaultProps()} />);
-    expect(screen.getByLabelText("Settings")).toBeInTheDocument();
-  });
-
   it("shows dealing state when phase is dealing", () => {
     renderWithSettings(<GameBoard {...defaultProps({ phase: "dealing" })} />);
     expect(screen.getByText("Dealing sticks...")).toBeInTheDocument();
-  });
-
-  it("opens hand guide modal", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderWithSettings(<GameBoard {...defaultProps()} />);
-
-    await user.click(screen.getByText("Hand Guide"));
-    expect(screen.getByText("Hand Rankings")).toBeInTheDocument();
   });
 
   it("shows silver amounts", () => {
@@ -73,15 +54,6 @@ describe("GameBoard", () => {
 
     await user.click(screen.getByText("Start Game"));
     expect(props.startRound).toHaveBeenCalled();
-  });
-
-  it("calls onOpenSettings when Settings is clicked", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    const props = defaultProps();
-    renderWithSettings(<GameBoard {...props} />);
-
-    await user.click(screen.getByLabelText("Settings"));
-    expect(props.onOpenSettings).toHaveBeenCalled();
   });
 
   it("hides timer in debug mode", () => {

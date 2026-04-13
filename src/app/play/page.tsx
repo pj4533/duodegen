@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import GameBoard from "@/components/game/GameBoard";
 import StrategyAdvisor from "@/components/game/StrategyAdvisor";
 import SettingsModal from "@/components/SettingsModal";
+import HandGuide from "@/components/HandGuide";
 import { useGameState } from "@/hooks/useGameState";
 import { useLearningMode } from "@/hooks/useLearningMode";
 import { useSettings } from "@/hooks/useSettings";
@@ -18,12 +19,43 @@ function PlayContent() {
     useGameState();
   const { advice } = useLearningMode(state, learningMode, handNameStyle);
   const [showSettings, setShowSettings] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   // Learning mode OR debug mode disables the timer
   const timerDisabled = learningMode || debugMode;
 
   return (
     <>
+      {/* Nav */}
+      <header className="flex items-center justify-between px-4 pr-24 py-3 border-b border-gold-dark/10">
+        <Link
+          href="/"
+          className="font-heading text-lg text-gold-dark hover:text-gold-light transition-colors tracking-wider"
+        >
+          DUODEGEN
+        </Link>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowSettings(true)}
+            className="text-xs font-heading text-parchment-dark/60 hover:text-gold-light transition-colors tracking-wider uppercase"
+          >
+            Settings
+          </button>
+          <button
+            onClick={() => setShowGuide(true)}
+            className="text-xs font-heading text-gold-dark hover:text-gold-light transition-colors tracking-wider uppercase"
+          >
+            Hand Guide
+          </button>
+          <Link
+            href="/rules"
+            className="text-xs font-heading text-parchment-dark/60 hover:text-parchment-light transition-colors tracking-wider uppercase"
+          >
+            Rules
+          </Link>
+        </div>
+      </header>
+
       <main className="flex-1 flex flex-col items-center px-4 py-6">
         <div className="w-full max-w-2xl flex flex-col md:flex-row md:gap-6 md:justify-center">
           <div className="flex-1 max-w-lg">
@@ -35,7 +67,6 @@ function PlayContent() {
               newGame={newGame}
               learningEnabled={learningMode}
               debugMode={timerDisabled}
-              onOpenSettings={() => setShowSettings(true)}
             />
           </div>
           {learningMode && advice && (
@@ -44,6 +75,7 @@ function PlayContent() {
         </div>
       </main>
       <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} />
+      <HandGuide open={showGuide} onClose={() => setShowGuide(false)} />
     </>
   );
 }
@@ -51,23 +83,6 @@ function PlayContent() {
 export default function PlayPage() {
   return (
     <div className="flex flex-1 flex-col relative z-10">
-      {/* Nav */}
-      <header className="flex items-center justify-between px-4 pr-24 py-3 border-b border-gold-dark/10">
-        <Link
-          href="/"
-          className="font-heading text-lg text-gold-dark hover:text-gold-light transition-colors tracking-wider"
-        >
-          DUODEGEN
-        </Link>
-        <Link
-          href="/rules"
-          className="text-xs font-heading text-parchment-dark/60 hover:text-parchment-light transition-colors tracking-wider uppercase"
-        >
-          Rules
-        </Link>
-      </header>
-
-      {/* Game Area */}
       <Suspense>
         <PlayContent />
       </Suspense>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useTimer } from "@/hooks/useTimer";
 import { evaluateHand } from "@/engine/hand-evaluator";
 import { GameState, BetAction } from "@/engine/types";
@@ -11,7 +10,6 @@ import Timer from "./Timer";
 import PotDisplay from "./PotDisplay";
 import RoundResult from "./RoundResult";
 import Button from "@/components/ui/Button";
-import HandGuide from "@/components/HandGuide";
 import ActionFeed from "./ActionFeed";
 
 interface GameBoardProps {
@@ -22,7 +20,6 @@ interface GameBoardProps {
   newGame: () => void;
   learningEnabled: boolean;
   debugMode?: boolean;
-  onOpenSettings: () => void;
 }
 
 export default function GameBoard({
@@ -33,14 +30,12 @@ export default function GameBoard({
   newGame,
   learningEnabled,
   debugMode = false,
-  onOpenSettings,
 }: GameBoardProps) {
   const { secondsLeft } = useTimer(
     state.phase === "playerBet",
     handleTimerExpired,
     debugMode
   );
-  const [showGuide, setShowGuide] = useState(false);
 
   const isShowdown = state.phase === "showdown" || state.phase === "roundEnd";
   const playerResult =
@@ -52,29 +47,12 @@ export default function GameBoard({
 
   return (
     <div className={`flex flex-col items-center gap-4 w-full relative z-10 ${learningEnabled ? "pb-16 md:pb-0" : ""}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between w-full">
+      {/* Round indicator */}
+      {state.roundNumber > 0 && (
         <div className="text-sm font-heading text-parchment-dark/60">
-          {state.roundNumber > 0 && (
-            <span>Round {state.roundNumber}</span>
-          )}
+          Round {state.roundNumber}
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onOpenSettings}
-            className="text-xs font-heading text-parchment-dark/60 hover:text-gold-light transition-colors tracking-wider uppercase"
-            aria-label="Settings"
-          >
-            Settings
-          </button>
-          <button
-            onClick={() => setShowGuide(true)}
-            className="text-xs font-heading text-gold-dark hover:text-gold-light transition-colors tracking-wider uppercase"
-          >
-            Hand Guide
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Opponent */}
       <OpponentHand
@@ -162,8 +140,6 @@ export default function GameBoard({
         />
       )}
 
-      {/* Hand Guide Modal */}
-      <HandGuide open={showGuide} onClose={() => setShowGuide(false)} />
     </div>
   );
 }

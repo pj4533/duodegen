@@ -235,6 +235,7 @@ describe("gameReducer", () => {
           aiHandResult: { rank: 2, name: "2 Points", special: null },
           winner: "player",
           potWon: 10,
+          playerNetGain: 5,
           wasRematch: false,
           specialResolution: null,
         },
@@ -261,6 +262,7 @@ describe("gameReducer", () => {
           aiHandResult: { rank: 2, name: "2 Points", special: null },
           winner: "draw",
           potWon: 0,
+          playerNetGain: 0,
           wasRematch: false,
           specialResolution: null,
         },
@@ -285,6 +287,7 @@ describe("gameReducer", () => {
           aiHandResult: { rank: 2, name: "2 Points", special: null },
           winner: "ai",
           potWon: 5,
+          playerNetGain: -3,
           wasRematch: false,
           specialResolution: null,
         },
@@ -323,6 +326,123 @@ describe("gameReducer", () => {
       expect(next.roundNumber).toBe(0);
       expect(next.bet.playerSilver).toBe(15);
       expect(next.bet.aiSilver).toBe(15);
+    });
+  });
+
+  describe("silver accounting", () => {
+    it("player loses only ante when folding immediately", () => {
+      // Both start at 15. Ante takes 1 each -> pot=2, player=14, ai=14
+      // Player has first turn, folds immediately
+      const state = stateAfterDeal();
+      expect(state.bet.pot).toBe(2);
+      expect(state.bet.playerSilver).toBe(14);
+      expect(state.bet.aiSilver).toBe(14);
+
+      const next = gameReducer(state, { type: "PLAYER_BET", action: "fold" });
+      expect(next.phase).toBe("roundEnd");
+      expect(next.lastResult!.playerNetGain).toBe(-1); // lost only the ante
+      expect(next.bet.playerSilver).toBe(14); // unchanged from before fold
+      expect(next.bet.aiSilver).toBe(16); // gets the pot
+    });
+
+    it("player loses only ante when folding after opponent raises", () => {
+      // AI goes first: set playerHasFirstTurn=false BEFORE dealing
+      let state = createInitialGameState();
+      state = gameReducer({ ...state, playerHasFirstTurn: false }, { type: "START_ROUND" });
+      state = gameReducer(state, {
+        type: "DEAL_COMPLETE",
+        playerHand: [stick(5, "red"), stick(7, "yellow")],
+        aiHand: [stick(3, "yellow"), stick(9, "yellow")],
+        revealedAiIndex: 0,
+        revealedPlayerIndex: 1,
+      });
+      expect(state.phase).toBe("aiBet");
+
+      // AI half-raises (pot=2, raise=1)
+      const afterAiRaise = gameReducer(state, { type: "AI_BET", action: "halfRaise" });
+      expect(afterAiRaise.bet.pot).toBe(3); // 2 + 1
+      expect(afterAiRaise.bet.aiSilver).toBe(13); // 14 - 1
+      expect(afterAiRaise.bet.playerSilver).toBe(14); // unchanged
+      expect(afterAiRaise.phase).toBe("playerBet");
+
+      // Player folds
+      const afterFold = gameReducer(afterAiRaise, { type: "PLAYER_BET", action: "fold" });
+      expect(afterFold.lastResult!.playerNetGain).toBe(-1); // only lost ante
+      expect(afterFold.bet.playerSilver).toBe(14); // unchanged
+      expect(afterFold.bet.aiSilver).toBe(16); // 13 + pot of 3
+    });
+
+    it("player loses ante + call amount when calling and losing", () => {
+      // AI goes first
+      let state = createInitialGameState();
+      state = gameReducer({ ...state, playerHasFirstTurn: false }, { type: "START_ROUND" });
+      state = gameReducer(state, {
+        type: "DEAL_COMPLETE",
+        playerHand: [stick(5, "red"), stick(7, "yellow")],
+        aiHand: [stick(3, "yellow"), stick(9, "yellow")],
+        revealedAiIndex: 0,
+        revealedPlayerIndex: 1,
+      });
+      const afterAiRaise = gameReducer(state, { type: "AI_BET", action: "halfRaise" });
+
+      // Player calls (must match currentBet=1)
+      const afterCall = gameReducer(afterAiRaise, { type: "PLAYER_BET", action: "call" });
+      expect(afterCall.bet.playerSilver).toBe(13); // 14 - 1 call
+      expect(afterCall.bet.playerBetThisRound).toBe(1);
+      expect(afterCall.bet.pot).toBe(4); // 3 + 1
+      expect(afterCall.phase).toBe("showdown"); // both acted, bets matched
+    });
+
+    it("silver sums are always conserved", () => {
+      const state = stateAfterDeal();
+      const totalStart = state.bet.playerSilver + state.bet.aiSilver + state.bet.pot;
+      expect(totalStart).toBe(30); // 14 + 14 + 2 = 30 (15+15)
+
+      // Player checks
+      const s1 = gameReducer(state, { type: "PLAYER_BET", action: "check" });
+      expect(s1.bet.playerSilver + s1.bet.aiSilver + s1.bet.pot).toBe(30);
+
+      // AI half-raises
+      const s2 = gameReducer(s1, { type: "AI_BET", action: "halfRaise" });
+      expect(s2.bet.playerSilver + s2.bet.aiSilver + s2.bet.pot).toBe(30);
+
+      // Player calls
+      const s3 = gameReducer(s2, { type: "PLAYER_BET", action: "call" });
+      expect(s3.bet.playerSilver + s3.bet.aiSilver + s3.bet.pot).toBe(30);
+    });
+
+    it("fold after raise shows correct net in action log", () => {
+      let state = createInitialGameState();
+      state = gameReducer({ ...state, playerHasFirstTurn: false }, { type: "START_ROUND" });
+      state = gameReducer(state, {
+        type: "DEAL_COMPLETE",
+        playerHand: [stick(5, "red"), stick(7, "yellow")],
+        aiHand: [stick(3, "yellow"), stick(9, "yellow")],
+        revealedAiIndex: 0,
+        revealedPlayerIndex: 1,
+      });
+      const afterAiRaise = gameReducer(state, { type: "AI_BET", action: "halfRaise" });
+      const afterFold = gameReducer(afterAiRaise, { type: "PLAYER_BET", action: "fold" });
+
+      expect(afterFold.actionLog).toHaveLength(2);
+      expect(afterFold.actionLog[0]).toMatchObject({ actor: "ai", action: "halfRaise" });
+      expect(afterFold.actionLog[1]).toMatchObject({ actor: "player", action: "fold", amount: 0 });
+    });
+
+    it("all-in and call tracks silver correctly", () => {
+      const state = stateAfterDeal();
+
+      // Player goes all-in (14 silver)
+      const s1 = gameReducer(state, { type: "PLAYER_BET", action: "allIn" });
+      expect(s1.bet.playerSilver).toBe(0);
+      expect(s1.bet.playerBetThisRound).toBe(14);
+      expect(s1.bet.pot).toBe(16); // 2 + 14
+
+      // AI calls (must match 14, but only has 14)
+      const s2 = gameReducer(s1, { type: "AI_BET", action: "call" });
+      expect(s2.bet.aiSilver).toBe(0);
+      expect(s2.bet.pot).toBe(30); // all silver in pot
+      expect(s2.bet.playerSilver + s2.bet.aiSilver + s2.bet.pot).toBe(30);
     });
   });
 });

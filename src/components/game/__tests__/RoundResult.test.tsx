@@ -19,6 +19,7 @@ function makeResult(overrides: Partial<RoundResultType> = {}): RoundResultType {
     aiHandResult: { rank: HandRank.Ali, name: "Ali", special: null },
     winner: "player",
     potWon: 10,
+    playerNetGain: 5,
     wasRematch: false,
     specialResolution: null,
     ...overrides,

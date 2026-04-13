@@ -6,7 +6,7 @@ import { createInitialGameState, gameReducer } from "@/engine/game-state";
 import { createDeck, shuffleDeck, dealHands } from "@/engine/deck";
 import { evaluateHand, resolveShowdown } from "@/engine/hand-evaluator";
 import { decideAiAction } from "@/engine/ai";
-import { MAX_REMATCHES } from "@/lib/constants";
+import { MAX_REMATCHES, ANTE_PER_PLAYER } from "@/lib/constants";
 
 export function useGameState() {
   const [state, dispatch] = useReducer(gameReducer, undefined, createInitialGameState);
@@ -101,6 +101,19 @@ export function useGameState() {
               ? "player"
               : "ai";
 
+        const playerContribution = ANTE_PER_PLAYER + state.bet.playerBetThisRound;
+        const aiContribution = ANTE_PER_PLAYER + state.bet.aiBetThisRound;
+        let playerNetGain: number;
+        if (winner === "player") {
+          playerNetGain = aiContribution;
+        } else if (winner === "ai") {
+          playerNetGain = -playerContribution;
+        } else {
+          // Draw: split pot, net is opponent's contribution minus ours, roughly 0
+          const half = Math.floor(state.bet.pot / 2);
+          playerNetGain = half - playerContribution;
+        }
+
         dispatch({
           type: "ROUND_COMPLETE",
           result: {
@@ -110,6 +123,7 @@ export function useGameState() {
             aiHandResult: aiResult,
             winner: winner as "player" | "ai" | "draw",
             potWon: state.bet.pot,
+            playerNetGain,
             wasRematch: state.rematchCount > 0,
             specialResolution: outcome.specialResolution,
           },
@@ -118,7 +132,7 @@ export function useGameState() {
     }, 1500); // Delay for showdown reveal
 
     return () => clearTimeout(resolveTimeout);
-  }, [state.phase, state.playerHand, state.aiHand, state.rematchCount, state.bet.pot]);
+  }, [state.phase, state.playerHand, state.aiHand, state.rematchCount, state.bet.pot, state.bet.playerBetThisRound, state.bet.aiBetThisRound]);
 
   return {
     state,

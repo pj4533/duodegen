@@ -116,6 +116,7 @@ export interface RoundResult {
   aiHandResult: HandResult;
   winner: "player" | "ai" | "draw";
   potWon: number;
+  playerNetGain: number;
   wasRematch: boolean;
   specialResolution: string | null;
 }

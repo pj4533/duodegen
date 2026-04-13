@@ -44,13 +44,17 @@ function createFoldResult(
   state: GameState,
   folder: "player" | "ai"
 ): RoundResult {
+  const playerContribution = ANTE_PER_PLAYER + state.bet.playerBetThisRound;
+  const aiContribution = ANTE_PER_PLAYER + state.bet.aiBetThisRound;
+  const playerWins = folder === "ai";
   return {
     playerHand: state.playerHand!,
     aiHand: state.aiHand!,
     playerHandResult: evaluateHand(state.playerHand!),
     aiHandResult: evaluateHand(state.aiHand!),
-    winner: folder === "player" ? "ai" : "player",
+    winner: playerWins ? "player" : "ai",
     potWon: state.bet.pot,
+    playerNetGain: playerWins ? aiContribution : -playerContribution,
     wasRematch: false,
     specialResolution: `${folder === "player" ? "You" : "Opponent"} folded`,
   };

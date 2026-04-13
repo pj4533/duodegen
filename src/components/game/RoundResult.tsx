@@ -58,9 +58,9 @@ export default function RoundResult({
               {aiName}
             </span>
           </p>
-          {!isDraw && (
-            <p className="mt-2 text-gold-light font-heading">
-              {isWin ? "+" : "-"}{result.potWon} silver
+          {result.playerNetGain !== 0 && (
+            <p className={`mt-2 font-heading ${result.playerNetGain > 0 ? "text-gold-light" : "text-crimson-400"}`}>
+              {result.playerNetGain > 0 ? "+" : ""}{result.playerNetGain} silver
             </p>
           )}
         </div>

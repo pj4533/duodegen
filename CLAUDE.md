@@ -1,6 +1,6 @@
 @AGENTS.md
 
-# Duo
+# Duodegen
 
 Practice website for the Duo card game from Crimson Desert (based on Korean Seotda).
 

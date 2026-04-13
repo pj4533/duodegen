@@ -11,9 +11,9 @@ describe("Play page", () => {
     vi.useRealTimers();
   });
 
-  it("renders the DUO header link", () => {
+  it("renders the DUODEGEN header link", () => {
     render(<PlayPage />);
-    expect(screen.getByText("DUO")).toBeInTheDocument();
+    expect(screen.getByText("DUODEGEN")).toBeInTheDocument();
   });
 
   it("renders the Rules link", () => {

@@ -9,7 +9,7 @@ export default function Home() {
       <main className="flex flex-col items-center gap-8 text-center relative">
         <div className="space-y-2">
           <h1 className="font-heading text-7xl sm:text-8xl font-bold tracking-wider text-gold-light drop-shadow-lg">
-            DUO
+            DUODEGEN
           </h1>
           <p className="font-heading text-lg sm:text-xl text-parchment-dark tracking-widest uppercase">
             A Crimson Desert Card Game

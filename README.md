@@ -1,4 +1,4 @@
-# Duo
+# Duodegen
 
 A practice website for the Duo card game from [Crimson Desert](https://store.steampowered.com/app/3321460/Crimson_Desert/) by Pearl Abyss. Duo is based on the traditional Korean card game [Seotda](https://en.wikipedia.org/wiki/Seotda), played with numbered sticks instead of Hwatu flower cards.
 

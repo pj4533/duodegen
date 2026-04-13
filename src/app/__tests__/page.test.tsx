@@ -3,9 +3,9 @@ import { render, screen } from "@testing-library/react";
 import Home from "../page";
 
 describe("Home page", () => {
-  it("renders the DUO title", () => {
+  it("renders the DUODEGEN title", () => {
     render(<Home />);
-    expect(screen.getByText("DUO")).toBeInTheDocument();
+    expect(screen.getByText("DUODEGEN")).toBeInTheDocument();
   });
 
   it("renders Play and Rules links", () => {

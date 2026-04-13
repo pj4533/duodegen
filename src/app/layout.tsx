@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Duo - Crimson Desert Card Game",
+  title: "Duodegen - Crimson Desert Card Game",
   description:
     "Practice the Duo card game from Crimson Desert. Master hand rankings, betting strategy, and special hands.",
 };

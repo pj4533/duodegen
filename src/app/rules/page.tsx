@@ -56,7 +56,7 @@ export default function RulesPage() {
           href="/"
           className="font-heading text-lg text-gold-dark hover:text-gold-light transition-colors tracking-wider"
         >
-          DUO
+          DUODEGEN
         </Link>
         <Link
           href="/play"

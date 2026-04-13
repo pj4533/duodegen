@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Duo
+
+A practice website for the Duo card game from [Crimson Desert](https://store.steampowered.com/app/3321460/Crimson_Desert/) by Pearl Abyss. Duo is based on the traditional Korean card game [Seotda](https://en.wikipedia.org/wiki/Seotda), played with numbered sticks instead of Hwatu flower cards.
+
+Play against an AI opponent, learn the hand rankings, and sharpen your betting strategy before heading to the Hernand Inn.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server (Turbopack) |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run type-check` | TypeScript check (`tsc --noEmit`) |
+| `npm test` | Run tests with coverage (80% threshold) |
+| `npm run test:watch` | Run tests in watch mode |
 
-## Learn More
+## Game Rules
 
-To learn more about Next.js, take a look at the following resources:
+### Deck
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+20 numbered sticks: 1-10, each in **Red** and **Yellow**.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Gameplay
 
-## Deploy on Vercel
+1. Buy in with **15 Silver** (Hernand Inn)
+2. Each player is dealt 2 sticks
+3. You can see one of your opponent's sticks
+4. Single betting round: Check, Call, Half Raise, Double Raise, All In, or Fold
+5. 10-second timer per decision (auto-Call on expiry)
+6. Highest hand wins the pot
+7. Winner gets first turn next round
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Hand Rankings (Best to Worst)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Rank | Hand | Cards |
+|------|------|-------|
+| 1 | Prime Pair | Red 3 + Red 8 |
+| 2 | Superior Pair | Red 1 + Red 8, or Red 1 + Red 3 |
+| 3 | Ten Pair | 10 + 10 |
+| 4-12 | Pair | 9-9 down to 1-1 |
+| 13 | Ali | 1 + 2 |
+| 14 | Dok Sa | 1 + 4 |
+| 15 | Gu Bing | 1 + 9 |
+| 16 | Jang Bing | 1 + 10 |
+| 17 | Jang Sa | 4 + 10 |
+| 18 | Sel Ryuk | 4 + 6 |
+| 19 | 9 Points | Sum ends in 9 |
+| 20-26 | 8-2 Points | Sum ends in 8 down to 2 |
+| 27 | 1 Point | Sum ends in 1 |
+| 28 | Mang Tong | Sum ends in 0 |
+
+### Special Hands
+
+| Hand | Cards | Ability |
+|------|-------|---------|
+| Judge | 3 + 7 | Beats 9-Pair or lower; becomes Zero vs Ten Pair+ |
+| Executor | Red 4 + Red 7 | Beats Superior Pair; becomes 1 Point otherwise |
+| Warden | 4 + 9 | Rematch if opponent has Ali or lower |
+| High Warden | Red 4 + Red 9 | Rematch if opponent has 9-Pair or lower |
+
+## Project Structure
+
+```
+src/
+  engine/          # Game logic (no UI dependencies)
+    types.ts       # Stick, HandRank, BetState, GameState
+    deck.ts        # Create, shuffle, deal
+    hand-evaluator.ts  # Evaluate hands, resolve showdowns
+    betting.ts     # Available actions, apply bets
+    game-state.ts  # Reducer-based state machine
+    ai.ts          # AI opponent strategy
+  components/
+    game/          # Game UI (Stick, BettingControls, Timer, etc.)
+    ui/            # Shared primitives (Button, Modal)
+    HandGuide.tsx  # In-game hand rankings reference
+  hooks/
+    useGameState.ts  # Central game hook (useReducer + side effects)
+    useTimer.ts      # 10-second countdown
+  app/
+    page.tsx       # Landing page
+    play/page.tsx  # Game screen
+    rules/page.tsx # Full rules reference
+```
+
+## Tech Stack
+
+- **Next.js 16** (App Router, TypeScript, Turbopack)
+- **Tailwind CSS v4**
+- **Framer Motion** for card animations
+- **Vitest** + **Testing Library** with v8 coverage (80% threshold)
+- **GitHub Actions** CI (lint, type-check, test, build)

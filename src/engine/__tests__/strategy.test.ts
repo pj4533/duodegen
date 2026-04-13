@@ -10,7 +10,7 @@ import {
   generateShowdownAdvice,
 } from "../strategy";
 import { evaluateHand } from "../hand-evaluator";
-import { Stick, HandRank, BetState } from "../types";
+import { Stick, BetState } from "../types";
 
 function stick(number: number, color: "red" | "yellow" = "red"): Stick {
   return { number, color };
@@ -612,26 +612,13 @@ describe("generateAdvice", () => {
   });
 
   it("overrides fold to raise when bluff is viable and not facing bet", () => {
-    // Weak hand with visible card 1 (good bluff card), not facing a bet
-    const hand: [Stick, Stick] = [stick(1, "red"), stick(6, "yellow")]; // 7 points, but let's use a trash hand
-    // Actually need a trash hand where card at index 0 is visible and is a 1
-    const trashHand: [Stick, Stick] = [stick(1, "red"), stick(9, "yellow")]; // Gu Bing actually, not trash
-    // Use a real trash hand: 2+8=10=0 points, but reveal index = 1 which is 8
-    // We need card at revealed index to be 1 for bluff. Let's construct:
-    const hand2: [Stick, Stick] = [stick(6, "yellow"), stick(1, "red")]; // 7 points, not trash
-    // For bluff to trigger: tier must be "weak" or "trash" AND visible card must be 1
-    // 3+2=5 points is weak. Put 1 at revealed index
-    const weakHand: [Stick, Stick] = [stick(8, "yellow"), stick(1, "red")]; // 9 points - medium
-    // OK: sum of 2+6=8 points (medium). Let's just use 5+6=11=1 point (trash!)
-    const trashHand2: [Stick, Stick] = [stick(1, "yellow"), stick(5, "yellow")]; // 6 points - weak
-    // 1+5=6 points, that's weak. But wait 1+5 is a named hand? No, only specific combos.
-    // Actually rank is Points6 which is "weak" tier, visible card at index 0 is 1 = bluff viable
-    const result = evaluateHand(trashHand2);
+    // 1+5=6 points (weak tier), visible card at index 0 is 1 = bluff viable
+    const hand: [Stick, Stick] = [stick(1, "yellow"), stick(5, "yellow")];
+    const result = evaluateHand(hand);
     const advice = generateAdvice(
-      trashHand2, result, stick(8, "yellow"), 0, baseBetState(), "playerBet"
+      hand, result, stick(8, "yellow"), 0, baseBetState(), "playerBet"
     );
     expect(advice).not.toBeNull();
-    // With visible card 1, bluff should be viable
     expect(advice!.bluffViable).toBe(true);
   });
 

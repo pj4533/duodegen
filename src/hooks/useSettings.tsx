@@ -4,7 +4,6 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   type ReactNode,
 } from "react";
 import { HandNameStyle } from "@/engine/hand-names";
@@ -25,26 +24,26 @@ const DEFAULT_SETTINGS: Settings = {
 
 const STORAGE_KEY = "duodegen-settings";
 
+function loadSettings(): Settings {
+  if (typeof window === "undefined") return DEFAULT_SETTINGS;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+    }
+  } catch {
+    // ignore corrupt data
+  }
+  return DEFAULT_SETTINGS;
+}
+
 const SettingsContext = createContext<SettingsContextValue>({
   ...DEFAULT_SETTINGS,
   updateSettings: () => {},
 });
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-
-  // Hydrate from localStorage after mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setSettings((prev) => ({ ...prev, ...parsed }));
-      } catch {
-        // ignore corrupt data
-      }
-    }
-  }, []);
+  const [settings, setSettings] = useState<Settings>(loadSettings);
 
   const updateSettings = (patch: Partial<Settings>) => {
     setSettings((prev) => {

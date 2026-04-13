@@ -4,6 +4,15 @@ A practice website for the Duo card game from [Crimson Desert](https://store.ste
 
 Play against an AI opponent, learn the hand rankings, and sharpen your betting strategy before heading to the Hernand Inn.
 
+## Features
+
+- Full Duo card game with AI opponent
+- **Learning Mode** - Real-time strategy advisor with hand strength analysis, pot odds, bluff detection, and opponent card reads (also disables timer)
+- **Action Feed** - Clear log of all betting actions each round
+- **Hand Name Styles** - Switch between Crimson Desert names and traditional Seotda names
+- **Hand Guide** - In-game reference for all rankings and special hands
+- **Settings** - Configurable learning mode and hand name preferences (persisted)
+
 ## Getting Started
 
 ```bash
@@ -43,22 +52,24 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Hand Rankings (Best to Worst)
 
+Crimson Desert names shown. Traditional Seotda names available in Settings.
+
 | Rank | Hand | Cards |
 |------|------|-------|
 | 1 | Prime Pair | Red 3 + Red 8 |
 | 2 | Superior Pair | Red 1 + Red 8, or Red 1 + Red 3 |
 | 3 | Ten Pair | 10 + 10 |
 | 4-12 | Pair | 9-9 down to 1-1 |
-| 13 | Ali | 1 + 2 |
-| 14 | Dok Sa | 1 + 4 |
-| 15 | Gu Bing | 1 + 9 |
-| 16 | Jang Bing | 1 + 10 |
-| 17 | Jang Sa | 4 + 10 |
-| 18 | Sel Ryuk | 4 + 6 |
-| 19 | 9 Points | Sum ends in 9 |
+| 13 | One-Two | 1 + 2 |
+| 14 | One-Four | 1 + 4 |
+| 15 | One-Nine | 1 + 9 |
+| 16 | One-Ten | 1 + 10 |
+| 17 | Four-Ten | 4 + 10 |
+| 18 | Four-Six | 4 + 6 |
+| 19 | Perfect Nine | Sum ends in 9 |
 | 20-26 | 8-2 Points | Sum ends in 8 down to 2 |
 | 27 | 1 Point | Sum ends in 1 |
-| 28 | Mang Tong | Sum ends in 0 |
+| 28 | Zero | Sum ends in 0 |
 
 ### Special Hands
 
@@ -66,7 +77,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 |------|-------|---------|
 | Judge | 3 + 7 | Beats 9-Pair or lower; becomes Zero vs Ten Pair+ |
 | Executor | Red 4 + Red 7 | Beats Superior Pair; becomes 1 Point otherwise |
-| Warden | 4 + 9 | Rematch if opponent has Ali or lower |
+| Warden | 4 + 9 | Rematch if opponent has One-Two or lower |
 | High Warden | Red 4 + Red 9 | Rematch if opponent has 9-Pair or lower |
 
 ## Project Structure
@@ -74,20 +85,27 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ```
 src/
   engine/          # Game logic (no UI dependencies)
-    types.ts       # Stick, HandRank, BetState, GameState
+    types.ts       # Stick, HandRank, BetState, GameState, ActionLogEntry
     deck.ts        # Create, shuffle, deal
     hand-evaluator.ts  # Evaluate hands, resolve showdowns
+    hand-names.ts  # Crimson Desert & Traditional Seotda name sets
     betting.ts     # Available actions, apply bets
     game-state.ts  # Reducer-based state machine
     ai.ts          # AI opponent strategy
+    strategy.ts    # Learning mode strategy advisor engine
   components/
-    game/          # Game UI (Stick, BettingControls, Timer, etc.)
+    game/          # Game UI (Stick, BettingControls, Timer, ActionFeed, etc.)
     ui/            # Shared primitives (Button, Modal)
     HandGuide.tsx  # In-game hand rankings reference
+    SettingsModal.tsx  # Settings for learning mode & hand names
+    GitHubCorner.tsx   # GitHub repo link
   hooks/
     useGameState.ts  # Central game hook (useReducer + side effects)
     useTimer.ts      # 10-second countdown
+    useLearningMode.ts # Strategy advisor derivation
+    useSettings.tsx  # App-wide settings context (localStorage-persisted)
   app/
+    layout.tsx     # Root layout (SettingsProvider, GitHubCorner)
     page.tsx       # Landing page
     play/page.tsx  # Game screen
     rules/page.tsx # Full rules reference

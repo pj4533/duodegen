@@ -110,6 +110,7 @@ describe("gameReducer", () => {
       );
       expect(afterAiAction.phase).toBe("roundEnd");
       expect(afterAiAction.bet.aiSilver).toBe(12 + 3); // AI gets pot
+      expect(afterAiAction.bet.pot).toBe(0); // pot cleared after fold
     });
   });
 

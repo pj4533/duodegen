@@ -89,6 +89,7 @@ export function gameReducer(
           bet: {
             ...state.bet,
             aiSilver: state.bet.aiSilver + state.bet.pot,
+            pot: 0,
           },
         };
       }
@@ -112,6 +113,7 @@ export function gameReducer(
           bet: {
             ...state.bet,
             playerSilver: state.bet.playerSilver + state.bet.pot,
+            pot: 0,
           },
         };
       }

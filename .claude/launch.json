@@ -1,0 +1,10 @@
+{
+  "servers": [
+    {
+      "name": "dev",
+      "command": "npm run dev",
+      "url": "http://localhost:3000",
+      "autoPort": true
+    }
+  ]
+}

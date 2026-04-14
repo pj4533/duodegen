@@ -46,7 +46,7 @@ export default function GameBoard({
   const isAiWinner = state.lastResult?.winner === "ai";
 
   return (
-    <div className={`flex flex-col items-center gap-4 w-full relative z-10 ${learningEnabled ? "pb-16 md:pb-0" : ""}`}>
+    <div className={`flex flex-col items-center gap-2 sm:gap-3 xl:gap-4 w-full relative z-10 ${learningEnabled ? "pb-16 md:pb-0" : ""}`}>
       {/* Round indicator */}
       {state.roundNumber > 0 && (
         <div className="text-sm font-heading text-parchment-dark/60">

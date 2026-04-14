@@ -58,7 +58,7 @@ function PlayContent() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center px-4 py-6">
+      <main className="flex-1 flex flex-col items-center px-4 py-2 sm:py-3 xl:py-6">
         <div className="w-full max-w-2xl flex flex-col md:flex-row md:gap-6 md:justify-center">
           <div className="flex-1 max-w-lg">
             <GameBoard

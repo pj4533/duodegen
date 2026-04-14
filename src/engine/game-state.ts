@@ -40,6 +40,15 @@ function createBetStateWithAnte(
   };
 }
 
+/**
+ * A round is game-ending when either player has run out of silver.
+ * Checked at every round-ending transition so the UI can show "New Game"
+ * instead of "Next Round" and block further rounds with a 0-silver ante.
+ */
+function computeGameOver(playerSilver: number, aiSilver: number): boolean {
+  return playerSilver <= 0 || aiSilver <= 0;
+}
+
 function createFoldResult(
   state: GameState,
   folder: "player" | "ai"
@@ -84,6 +93,18 @@ export function gameReducer(
 ): GameState {
   switch (action.type) {
     case "START_ROUND":
+      // Defensive: refuse to start a new round if the game is already over
+      // (either silver has reached zero). Without this, a new round would
+      // ante 0 silver (via Math.min) and loop indefinitely in free-play.
+      if (
+        state.gameOver ||
+        computeGameOver(state.bet.playerSilver, state.bet.aiSilver)
+      ) {
+        return {
+          ...state,
+          gameOver: true,
+        };
+      }
       return {
         ...state,
         phase: "dealing",
@@ -112,6 +133,8 @@ export function gameReducer(
       };
       if (action.action === "fold") {
         const foldResult = createFoldResult(state, "player");
+        const newAiSilver = state.bet.aiSilver + state.bet.pot;
+        const newPlayerSilver = state.bet.playerSilver;
         return {
           ...state,
           phase: "roundEnd",
@@ -119,9 +142,10 @@ export function gameReducer(
           playerHasFirstTurn: false,
           bet: {
             ...state.bet,
-            aiSilver: state.bet.aiSilver + state.bet.pot,
+            aiSilver: newAiSilver,
             pot: 0,
           },
+          gameOver: computeGameOver(newPlayerSilver, newAiSilver),
           actionLog: [...state.actionLog, logEntry],
         };
       }
@@ -152,6 +176,8 @@ export function gameReducer(
       };
       if (action.action === "fold") {
         const foldResult = createFoldResult(state, "ai");
+        const newPlayerSilver = state.bet.playerSilver + state.bet.pot;
+        const newAiSilver = state.bet.aiSilver;
         return {
           ...state,
           phase: "roundEnd",
@@ -159,9 +185,10 @@ export function gameReducer(
           playerHasFirstTurn: true,
           bet: {
             ...state.bet,
-            playerSilver: state.bet.playerSilver + state.bet.pot,
+            playerSilver: newPlayerSilver,
             pot: 0,
           },
+          gameOver: computeGameOver(newPlayerSilver, newAiSilver),
           actionLog: [...state.actionLog, logEntry],
         };
       }
@@ -229,7 +256,7 @@ export function gameReducer(
         aiSilver += state.bet.pot - half;
       }
 
-      const gameOver = playerSilver <= 0 || aiSilver <= 0;
+      const gameOver = computeGameOver(playerSilver, aiSilver);
 
       return {
         ...state,

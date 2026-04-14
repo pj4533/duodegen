@@ -446,6 +446,122 @@ describe("gameReducer", () => {
     });
   });
 
+  describe("game-over detection on round end", () => {
+    it("sets gameOver when AI folds with 0 silver (rematch starvation bug)", () => {
+      // Reproduces the real-world bug: after a prior all-in, AI is at 0
+      // silver. A rematch or new round ensues where the player raises.
+      // AI's only option is to fold. The fold path must set gameOver so the
+      // UI shows 'New Game' instead of letting another round start with
+      // ante=0 (Math.min(1, playerSilver, 0) = 0).
+      const base = stateAfterDeal({
+        bet: {
+          pot: 4,
+          currentBet: 2,
+          playerSilver: 10,
+          aiSilver: 0,
+          playerBetThisRound: 2,
+          aiBetThisRound: 0,
+          lastRaise: 2,
+          bettingStarted: true,
+          playerActed: true,
+          aiActed: false,
+        },
+        phase: "aiBet",
+      });
+      const afterFold = gameReducer(base, { type: "AI_BET", action: "fold" });
+      expect(afterFold.phase).toBe("roundEnd");
+      expect(afterFold.bet.aiSilver).toBe(0);
+      expect(afterFold.bet.playerSilver).toBe(14); // got the 4-silver pot
+      expect(afterFold.gameOver).toBe(true);
+    });
+
+    it("sets gameOver when player folds with 0 silver left", () => {
+      // Player folded after bets drained them to 0 (a scenario that can
+      // arise in multi-rematch betting where silver state carries).
+      const base = stateAfterDeal({
+        bet: {
+          pot: 10,
+          currentBet: 5,
+          playerSilver: 0,
+          aiSilver: 5,
+          playerBetThisRound: 5,
+          aiBetThisRound: 5,
+          lastRaise: 5,
+          bettingStarted: true,
+          playerActed: false,
+          aiActed: true,
+        },
+        phase: "playerBet",
+      });
+      const afterFold = gameReducer(base, {
+        type: "PLAYER_BET",
+        action: "fold",
+      });
+      expect(afterFold.phase).toBe("roundEnd");
+      expect(afterFold.bet.playerSilver).toBe(0);
+      expect(afterFold.bet.aiSilver).toBe(15); // got the 10-silver pot
+      expect(afterFold.gameOver).toBe(true);
+    });
+
+    it("does not set gameOver when fold leaves both players with silver", () => {
+      const base = stateAfterDeal({
+        bet: {
+          pot: 4,
+          currentBet: 2,
+          playerSilver: 10,
+          aiSilver: 10,
+          playerBetThisRound: 2,
+          aiBetThisRound: 0,
+          lastRaise: 2,
+          bettingStarted: true,
+          playerActed: true,
+          aiActed: false,
+        },
+        phase: "aiBet",
+      });
+      const afterFold = gameReducer(base, { type: "AI_BET", action: "fold" });
+      expect(afterFold.gameOver).toBe(false);
+    });
+  });
+
+  describe("START_ROUND defense", () => {
+    it("refuses to start a round when a player has 0 silver", () => {
+      // Even if something elsewhere failed to set gameOver, START_ROUND
+      // must not start a new round with 0-silver ante.
+      const state = {
+        ...createInitialGameState(),
+        phase: "roundEnd" as const,
+        bet: {
+          ...createInitialGameState().bet,
+          playerSilver: 15,
+          aiSilver: 0,
+        },
+      };
+      const next = gameReducer(state, { type: "START_ROUND" });
+      expect(next.phase).toBe("roundEnd"); // did not transition to "dealing"
+      expect(next.roundNumber).toBe(0);
+      expect(next.gameOver).toBe(true); // corrected
+    });
+
+    it("refuses to start a round when gameOver is already set", () => {
+      const state = {
+        ...createInitialGameState(),
+        phase: "roundEnd" as const,
+        gameOver: true,
+      };
+      const next = gameReducer(state, { type: "START_ROUND" });
+      expect(next.phase).toBe("roundEnd");
+      expect(next.roundNumber).toBe(0);
+    });
+
+    it("starts normally when both players still have silver", () => {
+      const state = createInitialGameState();
+      const next = gameReducer(state, { type: "START_ROUND" });
+      expect(next.phase).toBe("dealing");
+      expect(next.roundNumber).toBe(1);
+    });
+  });
+
   describe("response to all-in after passive action", () => {
     it("player gets to respond when AI goes all-in after player checks", () => {
       // Player first turn → player checks → AI all-ins.

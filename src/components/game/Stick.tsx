@@ -158,7 +158,10 @@ export default function Stick({
 }: StickProps) {
   const clipId = useId();
   const isRed = stick.color === "red";
-  const dimensions = size === "md" ? "w-16 h-28 sm:w-20 sm:h-36" : "w-12 h-20";
+  const dimensions =
+    size === "md"
+      ? "w-[clamp(2.5rem,7.5vh,5rem)] h-[clamp(4rem,13vh,9rem)]"
+      : "w-12 h-20";
   const label = `${stick.color === "red" ? "Red" : "Yellow"} ${stick.number}`;
 
   if (!revealed) {
@@ -270,7 +273,10 @@ export default function Stick({
 
 export function StickBack({ size = "md" }: { size?: "sm" | "md" }) {
   const clipId = useId();
-  const dimensions = size === "md" ? "w-16 h-28 sm:w-20 sm:h-36" : "w-12 h-20";
+  const dimensions =
+    size === "md"
+      ? "w-[clamp(2.5rem,7.5vh,5rem)] h-[clamp(4rem,13vh,9rem)]"
+      : "w-12 h-20";
 
   return (
     <div className={`${dimensions} relative select-none`}>

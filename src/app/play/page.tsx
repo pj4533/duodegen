@@ -58,9 +58,9 @@ function PlayContent() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center px-4 py-2 sm:py-3 xl:py-6">
-        <div className="w-full max-w-2xl flex flex-col md:flex-row md:gap-6 md:justify-center">
-          <div className="flex-1 max-w-lg">
+      <main className="flex-1 min-h-0 flex flex-col items-center px-4 py-2 sm:py-3 xl:py-6 overflow-hidden">
+        <div className="w-full max-w-2xl flex-1 min-h-0 flex flex-col md:flex-row md:gap-6 md:justify-center">
+          <div className="flex-1 min-h-0 max-w-lg w-full">
             <GameBoard
               state={state}
               startRound={startRound}
@@ -85,7 +85,7 @@ function PlayContent() {
 
 export default function PlayPage() {
   return (
-    <div className="flex flex-1 flex-col relative z-10">
+    <div className="flex flex-col h-dvh overflow-hidden relative z-10">
       <Suspense>
         <PlayContent />
       </Suspense>

@@ -27,8 +27,8 @@ export default function PlayerHand({
           </>
         ) : (
           <>
-            <div className="w-16 h-28 sm:w-20 sm:h-36" />
-            <div className="w-16 h-28 sm:w-20 sm:h-36" />
+            <div className="w-[clamp(2.5rem,7.5vh,5rem)] h-[clamp(4rem,13vh,9rem)]" />
+            <div className="w-[clamp(2.5rem,7.5vh,5rem)] h-[clamp(4rem,13vh,9rem)]" />
           </>
         )}
       </div>

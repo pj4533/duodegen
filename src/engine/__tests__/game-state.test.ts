@@ -445,4 +445,110 @@ describe("gameReducer", () => {
       expect(s2.bet.playerSilver + s2.bet.aiSilver + s2.bet.pot).toBe(30);
     });
   });
+
+  describe("response to all-in after passive action", () => {
+    it("player gets to respond when AI goes all-in after player checks", () => {
+      // Player first turn → player checks → AI all-ins.
+      // Regression: betting must NOT short-circuit to showdown; player
+      // must be given the chance to call or fold.
+      const base = stateAfterDeal();
+      const afterCheck = gameReducer(base, { type: "PLAYER_BET", action: "check" });
+      expect(afterCheck.phase).toBe("aiBet");
+
+      const afterAllIn = gameReducer(afterCheck, { type: "AI_BET", action: "allIn" });
+      expect(afterAllIn.phase).toBe("playerBet");
+      expect(afterAllIn.bet.aiSilver).toBe(0);
+      expect(afterAllIn.bet.playerActed).toBe(false); // reset after AI raised
+      expect(afterAllIn.bet.aiActed).toBe(true);
+    });
+
+    it("AI gets to respond when player goes all-in after AI checks", () => {
+      // Symmetric case: AI has first turn, checks, player all-ins.
+      const base = stateAfterDeal({ playerHasFirstTurn: false });
+      // Manually set phase to aiBet (DEAL_COMPLETE with first-turn=false would
+      // already do this, but the helper forces playerHasFirstTurn=true).
+      const aiFirst = gameReducer(
+        { ...base, phase: "aiBet" as const },
+        { type: "AI_BET", action: "check" }
+      );
+      expect(aiFirst.phase).toBe("playerBet");
+
+      const afterAllIn = gameReducer(aiFirst, { type: "PLAYER_BET", action: "allIn" });
+      expect(afterAllIn.phase).toBe("aiBet");
+      expect(afterAllIn.bet.playerSilver).toBe(0);
+      expect(afterAllIn.bet.aiActed).toBe(false); // reset after player raised
+      expect(afterAllIn.bet.playerActed).toBe(true);
+    });
+
+    it("player gets to respond to AI all-in re-raise after player raises", () => {
+      // Player raises first, AI re-raises all-in → player must get a chance.
+      const base = stateAfterDeal();
+      const afterRaise = gameReducer(base, {
+        type: "PLAYER_BET",
+        action: "allIn",
+      });
+      expect(afterRaise.phase).toBe("aiBet");
+      expect(afterRaise.bet.playerSilver).toBe(0);
+
+      // AI goes all-in on top (short all-in since AI has same starting silver)
+      const afterAiAllIn = gameReducer(afterRaise, {
+        type: "AI_BET",
+        action: "allIn",
+      });
+      // Both all-in: betting is complete (neither can act further).
+      expect(afterAiAllIn.phase).toBe("showdown");
+    });
+
+    it("short all-in (cannot cover the call) still ends betting immediately", () => {
+      // If the responder can't afford the full call and short-all-ins, betting
+      // is complete — the responder has no more silver to act with.
+      const base = stateAfterDeal({
+        bet: {
+          ...createInitialGameState().bet,
+          pot: 2,
+          currentBet: 0,
+          playerSilver: 5, // low on silver
+          aiSilver: 15,
+          playerBetThisRound: 0,
+          aiBetThisRound: 0,
+          lastRaise: 0,
+          bettingStarted: false,
+          playerActed: false,
+          aiActed: false,
+        },
+      });
+      // Player checks.
+      const afterCheck = gameReducer(base, { type: "PLAYER_BET", action: "check" });
+      // AI all-ins with 15 silver.
+      const afterAiAllIn = gameReducer(afterCheck, { type: "AI_BET", action: "allIn" });
+      // Player has 5 silver but currentBet is 15 — player must still get to
+      // decide (short-all-in or fold).
+      expect(afterAiAllIn.phase).toBe("playerBet");
+
+      // Player short-all-ins.
+      const afterShortAllIn = gameReducer(afterAiAllIn, {
+        type: "PLAYER_BET",
+        action: "allIn",
+      });
+      // Now both all-in, no one can act further → showdown.
+      expect(afterShortAllIn.phase).toBe("showdown");
+      expect(afterShortAllIn.bet.playerSilver).toBe(0);
+    });
+
+    it("does not reset opponent's acted flag on a non-raising action", () => {
+      // AI raises, player calls → bets match, should go to showdown.
+      const base = stateAfterDeal({ playerHasFirstTurn: false });
+      const afterAiRaise = gameReducer(
+        { ...base, phase: "aiBet" as const },
+        { type: "AI_BET", action: "halfRaise" }
+      );
+      expect(afterAiRaise.phase).toBe("playerBet");
+      const afterPlayerCall = gameReducer(afterAiRaise, {
+        type: "PLAYER_BET",
+        action: "call",
+      });
+      // Call matches the bet — betting should complete.
+      expect(afterPlayerCall.phase).toBe("showdown");
+    });
+  });
 });

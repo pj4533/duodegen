@@ -125,9 +125,15 @@ export function gameReducer(
           actionLog: [...state.actionLog, logEntry],
         };
       }
+      const appliedBet = applyBet(state.bet, "player", action.action);
+      // If the player raised (increased currentBet), the AI must respond to
+      // the new bet level — reset aiActed so betting isn't prematurely marked
+      // complete. Skip the reset if AI is already all-in (can't act further).
+      const raised = appliedBet.currentBet > state.bet.currentBet;
       const newBet = {
-        ...applyBet(state.bet, "player", action.action),
+        ...appliedBet,
         playerActed: true,
+        aiActed: raised && appliedBet.aiSilver > 0 ? false : appliedBet.aiActed,
       };
       logEntry.amount = newBet.playerBetThisRound - state.bet.playerBetThisRound;
       const bothActed = newBet.playerActed && newBet.aiActed;
@@ -159,9 +165,16 @@ export function gameReducer(
           actionLog: [...state.actionLog, logEntry],
         };
       }
+      const appliedBet = applyBet(state.bet, "ai", action.action);
+      // If the AI raised (increased currentBet), the player must respond to
+      // the new bet level — reset playerActed so betting isn't prematurely
+      // marked complete. Skip the reset if player is already all-in.
+      const raised = appliedBet.currentBet > state.bet.currentBet;
       const newBet = {
-        ...applyBet(state.bet, "ai", action.action),
+        ...appliedBet,
         aiActed: true,
+        playerActed:
+          raised && appliedBet.playerSilver > 0 ? false : appliedBet.playerActed,
       };
       logEntry.amount = newBet.aiBetThisRound - state.bet.aiBetThisRound;
       const bothActed = newBet.playerActed && newBet.aiActed;
